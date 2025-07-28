@@ -1,30 +1,98 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
+import "./App.css";
+
+import { AuroraText } from "@/components/magicui/aurora-text";
+import { AnimatePresence, motion } from "framer-motion";
+import { TextAnimate } from "@/components/magicui/text-animate";
+import { Pointer } from "@/components/magicui/pointer";
+
 
 function App() {
+  const [isIntroVisible, setIsIntroVisible] = useState(true);
+  const words = ["Nideesh", "Website"];
+
+  const containerVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.5,
+      },
+    },
+  };
+
+  const wordVariants = {
+    hidden: { opacity: 0, y: -50 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Welcome to 21st.dev</CardTitle>
-          <CardDescription>
-            Beautiful components are now working!
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Input placeholder="Enter your email" />
-          <Button className="w-full">Get Started</Button>
-          <Button variant="outline" className="w-full">Learn More</Button>
-        </CardContent>
-      </Card>
+    <div className="min-h-screen flex flex-col items-center justify-center gap-y-8">
+      <AnimatePresence mode="wait">
+        {isIntroVisible ? (
+          <motion.div
+            key="intro"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col items-center gap-y-8"
+          >
+            <motion.h1
+              layout
+              className="text-5xl font-bold tracking-tighter md:text-7xl lg:text-9xl text-center transform transition-transform duration-300 ease-in-out hover:scale-105 flex justify-center"
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              variants={containerVariants}
+              onClick={() => setIsIntroVisible(false)}
+            >
+              {words.map((word, idx) => (
+                <motion.span
+                  layout
+                  key={idx}
+                  className="inline-block mr-4"
+                  variants={wordVariants}
+                  transition={{ duration: 0.5, ease: "easeIn" }}
+                >
+                  {word === "Website" ? (
+                    <AuroraText>Website</AuroraText>
+                  ) : (
+                    <p>{word}</p>
+                  )}
+                </motion.span>
+              ))}
+            </motion.h1>
+
+            <TextAnimate className="text-2xl" delay={1.5}>
+              Click above to learn more
+            </TextAnimate>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="main"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col items-center gap-y-8"
+          >
+            <p>temp</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <Pointer>
+        <div className="text-2xl">👆</div>
+      </Pointer>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
+
+/*
+
+, if you want ¯\_(ツ)_/¯
+
+*/
