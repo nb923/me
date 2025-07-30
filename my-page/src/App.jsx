@@ -16,8 +16,16 @@ import { cn } from "./lib/utils";
 
 function App() {
   const [isIntroVisible, setIsIntroVisible] = useState(true);
+  const [text, setText] = useState("");
   const words = ["Nideesh", "GPT"];
-  const prompts = [];
+  const prompts = ["Summarize my background in 3–5 sentences. Include my education, relevant work experience, notable projects, and any competitions or awards I’ve earned. Focus on giving a clear and concise picture of who I am professionally.", "Compare me to other candidates at a similar stage in their career. Research typical skills, experience, or accomplishments for someone in my field and provide statistics or examples and compare them to me in topics such as technical skills, project depth, awards, or leadership roles.", "Based on the job description below, explain my fit for this role. Focus on alignment with required skills, past experience, and potential contributions.\n\nJob Description:\n[Paste job description here]", "Share a lighthearted or surprising fact about me. Make it authentic and memorable, something that could spark a conversation.", "List 5–7 of my favorite songs. Include a variety of genres or moods if possible, and keep it casual and reflective of my personality."];
+
+  function handleTextChange(e) 
+  {
+    setText(e.target.value);
+  }
+
+  console.log(text);
 
   const containerVariants = {
     hidden: {},
@@ -136,6 +144,8 @@ function App() {
                 <Textarea
                   className="h-20 w-150 text-left resize-none scrollbar-thin scroll-smooth cursor-none border-gray-300 text-[rgb(0,0,0,75%)] bg-white"
                   placeholder="Ask me anything... this agent knows my resume better than I do"
+                  value = {text}
+                  onChange = {handleTextChange}
                 />
                 <div className="flex flex-col ml-2 space-y-2">
                   <Button className="h-9 w-9 bg-blue-500 border border-blue-500 cursor-none transform transition-transform duration-100 hover:scale-110 hover:bg-blue-500">
@@ -147,22 +157,22 @@ function App() {
                 </div>
               </div>
               <div className="flex justify-center pt-8 space-x-4">
-                <ShinyButton variant="outline" className="rounded-3xl bg-white">
-                  Summarize experience
+                <ShinyButton variant="outline" className="cursor-none rounded-3xl bg-white" onClick={() => setText(prompts[0])}>
+                  Summarize my experience
                 </ShinyButton>
-                <ShinyButton variant="outline" className="rounded-3xl bg-white">
-                  Compare to peers
+                <ShinyButton variant="outline" className="cursor-none rounded-3xl bg-white" onClick={() => setText(prompts[1])}>
+                  Compare me to peers
                 </ShinyButton>
               </div>
               <div className="flex justify-center pt-2 space-x-4">
-                <ShinyButton variant="outline" className="rounded-3xl bg-white">
-                  Explain role fit
+                <ShinyButton variant="outline" className="cursor-none rounded-3xl bg-white" onClick={() => setText(prompts[2])}>
+                  Explain my role fit
                 </ShinyButton>
-                <ShinyButton variant="outline" className="rounded-3xl bg-white">
-                  Highlight skills
+                <ShinyButton variant="outline" className="cursor-none rounded-3xl bg-white" onClick={() => setText(prompts[3])}>
+                  Share a fun fact about me
                 </ShinyButton>
-                <ShinyButton variant="outline" className="rounded-3xl bg-white">
-                  Showcase achievements
+                <ShinyButton variant="outline" className="cursor-none rounded-3xl bg-white" onClick={() => setText(prompts[4])}>
+                  List my favorite songs
                 </ShinyButton>
               </div>
             </div>
