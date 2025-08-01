@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 import "./App.css";
 
@@ -37,8 +37,7 @@ function App() {
   const fileInputDummy = useRef(null);
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("");
-  const [wasOpen, setWasOpen] = useState(false);
-  const [isRemoved, setIsRemoved] = useState(false);
+  const audioRef = useRef(null);
 
   const words = ["Nideesh", "GPT"];
   const prompts = [
@@ -48,6 +47,13 @@ function App() {
     "Share a lighthearted or surprising fact about me. Make it authentic and memorable, something that could spark a conversation.",
     "List 5–7 of my favorite songs. Include a variety of genres or moods if possible, and keep it casual and reflective of my personality.",
   ];
+
+  function handleChangeToMain() {
+    setIsIntroVisible(false);
+
+    const audio = new Audio("./src/assets/intro-sound.mp3");
+    audio.play();
+  }
 
   function handleTextChange(e) {
     setText(e.target.value);
@@ -71,9 +77,33 @@ function App() {
 
     setFile(file);
     setFileName(file.name);
-    setWasOpen(true);
-    setIsRemoved(false);
   }
+
+  console.log(musicOn);
+
+  function handleMusicToggle() {
+    setMusicOn((prev) => {
+      if (prev) {
+        audioRef.current?.pause();
+      }
+      else {
+        audioRef.current?.play();
+      }
+
+      return !prev;
+    });
+  }
+
+  useEffect(() => {
+    audioRef.current?.play().catch(() => {
+      const catchInteract = () => {
+        audioRef.current?.play();
+        document.removeEventListener('mousemove', catchInteract);
+      };
+
+      document.addEventListener('mousemove', catchInteract, {once: true});
+    })
+  }, [])
 
   const containerVariants = {
     hidden: {},
@@ -135,7 +165,7 @@ function App() {
               animate="visible"
               exit="hidden"
               variants={containerVariants}
-              onClick={() => setIsIntroVisible(false)}
+              onClick={() => handleChangeToMain()}
             >
               {words.map((word, idx) => (
                 <motion.span
@@ -160,6 +190,7 @@ function App() {
           </motion.div>
         ) : (
           <>
+            <audio ref={audioRef} src="https://hollow-knight-bucket.s3.us-east-2.amazonaws.com/hollow-knight.mp3" autoPlay loop preload="auto" />
             <a
               href="https://www.linkedin.com/in/bknideesh/"
               target="_blank"
@@ -219,15 +250,15 @@ function App() {
                       checked={darkMode}
                       onCheckedChange={setDarkMode}
                     />
-                    <Label className="text-sm">Dark Mode TBD</Label>
+                    <Label className="text-sm cursor-none relative bottom-[2px]">Dark Mode TBD</Label>
                   </span>
                   <span className="flex items-center space-x-2">
                     <Switch
                       className="data-[state=checked]:bg-blue-500 cursor-none"
                       checked={musicOn}
-                      onCheckedChange={setMusicOn}
+                      onCheckedChange={handleMusicToggle}
                     />
-                    <Label className="text-sm">Music Toggle TBD</Label>
+                    <Label className="text-sm cursor-none relative bottom-[2px]"><a href="https://www.youtube.com/watch?v=qCqf7D2WpFE&list=RDqCqf7D2WpFE&start_radio=1" className="cursor-none text-blue-500 underline underline-offset-3">Music</a> Toggle</Label>
                   </span>
                 </div>
               </PopoverContent>
