@@ -50,9 +50,6 @@ function App() {
 
   function handleChangeToMain() {
     setIsIntroVisible(false);
-
-    const audio = new Audio("./src/assets/intro-sound.mp3");
-    audio.play();
   }
 
   function handleTextChange(e) {
@@ -79,14 +76,11 @@ function App() {
     setFileName(file.name);
   }
 
-  console.log(musicOn);
-
   function handleMusicToggle() {
     setMusicOn((prev) => {
       if (prev) {
         audioRef.current?.pause();
-      }
-      else {
+      } else {
         audioRef.current?.play();
       }
 
@@ -98,12 +92,12 @@ function App() {
     audioRef.current?.play().catch(() => {
       const catchInteract = () => {
         audioRef.current?.play();
-        document.removeEventListener('mousemove', catchInteract);
+        document.removeEventListener("mousemove", catchInteract);
       };
 
-      document.addEventListener('mousemove', catchInteract, {once: true});
-    })
-  }, [])
+      document.addEventListener("mousemove", catchInteract, { once: true });
+    });
+  }, []);
 
   const containerVariants = {
     hidden: {},
@@ -190,7 +184,13 @@ function App() {
           </motion.div>
         ) : (
           <>
-            <audio ref={audioRef} src="https://hollow-knight-bucket.s3.us-east-2.amazonaws.com/hollow-knight.mp3" autoPlay loop preload="auto" />
+            <audio
+              ref={audioRef}
+              src="https://hollow-knight-bucket.s3.us-east-2.amazonaws.com/vibe.mp3"
+              autoPlay
+              loop
+              preload="auto"
+            />
             <a
               href="https://www.linkedin.com/in/bknideesh/"
               target="_blank"
@@ -250,7 +250,9 @@ function App() {
                       checked={darkMode}
                       onCheckedChange={setDarkMode}
                     />
-                    <Label className="text-sm cursor-none relative bottom-[2px]">Dark Mode TBD</Label>
+                    <Label className="text-sm cursor-none relative bottom-[2px]">
+                      Dark Mode TBD
+                    </Label>
                   </span>
                   <span className="flex items-center space-x-2">
                     <Switch
@@ -258,7 +260,17 @@ function App() {
                       checked={musicOn}
                       onCheckedChange={handleMusicToggle}
                     />
-                    <Label className="text-sm cursor-none relative bottom-[2px]"><a href="https://www.youtube.com/watch?v=qCqf7D2WpFE&list=RDqCqf7D2WpFE&start_radio=1" className="cursor-none text-blue-500 underline underline-offset-3">Music</a> Toggle</Label>
+                    <Label className="text-sm cursor-none relative bottom-[2px]">
+                      <a
+                        href="https://www.youtube.com/watch?v=_Q8Ih2SW-TE"
+                        className="cursor-none text-blue-500 underline underline-offset-3"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Music
+                      </a>{" "}
+                      Toggle
+                    </Label>
                   </span>
                 </div>
               </PopoverContent>
