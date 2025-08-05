@@ -344,13 +344,13 @@ function App() {
                   </div>
                 </div>
                 {file && (
-                  <div className="flex flex-row items-center border border-blue-300 bg-blue-100 rounded-sm pl-3 mt-1 -mb-3 w-fit animate-in fade-in-0 duration-600">
-                    <div className="rounded-full bg-blue-500 h-1.5 w-1.5 mr-2" />
-                    <p className="text-[0.71rem] relative font-semibold text-blue-950">
+                  <div className="flex flex-row items-center border border-blue-300 bg-blue-100 rounded-sm pl-3 mt-1 -mb-3 4xl:pl-6 4xl:mt-2 4xl:-mb-1 4xl:pt-2 4xl:pb-2 4xl:border-2 4xl:rounded-xl w-fit animate-in fade-in-0 duration-600">
+                    <div className="rounded-full bg-blue-500 h-1.5 w-1.5 mr-2 4xl:w-3 4xl:h-3 4xl:mr-4" />
+                    <p className="text-[0.71rem] 4xl:text-[1.33rem] relative font-semibold text-blue-950">
                       {fileName}
                     </p>
                     <button
-                      className="relative bottom-[1px] text-blue-950 cursor-none pl-2 pr-3"
+                      className="relative bottom-[1px] text-blue-950 cursor-none pl-2 pr-3 4xl:pl-4 4xl:pr-6 4xl:text-2xl 4xl:bottom-[3px]"
                       onClick={() => setFile(null)}
                     >
                       ×
