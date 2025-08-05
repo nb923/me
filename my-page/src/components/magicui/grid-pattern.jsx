@@ -33,7 +33,8 @@ export function GridPattern({
           <path
             d={`M.5 ${height}V.5H${width}`}
             fill="none"
-            strokeDasharray={strokeDasharray} />
+            strokeDasharray={strokeDasharray}
+            className="4xl:stroke-[4px]" />
         </pattern>
       </defs>
       <rect width="100%" height="100%" strokeWidth={0} fill={`url(#${id})`} />
