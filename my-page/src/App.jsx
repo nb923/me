@@ -404,7 +404,7 @@ function App() {
         )}
       </AnimatePresence>
       <Pointer>
-        <div className="text-2xl">👆</div>
+        <div className="text-2xl 4xl:text-4xl">👆</div>
       </Pointer>
     </div>
   );
