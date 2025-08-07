@@ -443,7 +443,7 @@ Feel free to connect with Nideesh to learn more about his journey and projects!`
                       checked={musicOn}
                       onCheckedChange={handleMusicToggle}
                     />
-                    <Label className="text-sm 4xl:text-[1.7rem] cursor-none relative bottom-[2px]">
+                    <Label className="text-sm 4xl:text-[1.7rem] cursor-none relative bottom-[2px] flex flex-row space-x-1 4xl:space-x-2">
                       <a
                         href="https://www.youtube.com/watch?v=_Q8Ih2SW-TE"
                         className="cursor-none text-blue-500 underline underline-offset-3"
@@ -452,7 +452,7 @@ Feel free to connect with Nideesh to learn more about his journey and projects!`
                       >
                         Music
                       </a>
-                      Toggle
+                      <p>Toggle</p>
                     </Label>
                   </span>
                 </div>
