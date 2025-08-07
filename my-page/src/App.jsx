@@ -32,6 +32,11 @@ import { Switch } from "./components/ui/switch";
 import { Label } from "@radix-ui/react-label";
 import { Card } from "./components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "./components/ui/avatar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 function App() {
   const HUMANMESSAGE = 1;
@@ -63,7 +68,7 @@ function App() {
 
     "What are some of Nideesh’s favorite songs? Share 5–7 tracks across different genres or moods if you can — I want to get a casual sense of his personality through the kind of music he enjoys.",
   ];
-  
+
   const [messages, setMessages] = useState([]);
 
   function handleChangeToMain() {
@@ -119,6 +124,7 @@ function App() {
   async function handleTextSubmit() {
     if (text) {
       let sent = text;
+      let sentFile = file;
 
       setIsChatMode(true);
       setIsChatWritten((prev) => !prev);
@@ -126,7 +132,7 @@ function App() {
       setIsChatLoading((prev) => !prev);
       setFile(null);
 
-      let formatSent = [HUMANMESSAGE, sent];
+      let formatSent = [HUMANMESSAGE, sent, sentFile];
 
       setMessages((prev) => [...prev, formatSent]);
 
@@ -157,6 +163,7 @@ function App() {
 ---
 
 Feel free to connect with Nideesh to learn more about his journey and projects!`,
+        null,
       ];
 
       setMessages((prev) => [...prev, response]);
@@ -168,7 +175,10 @@ Feel free to connect with Nideesh to learn more about his journey and projects!`
   function MessageBubble({ message, messageIndex }) {
     let type = message[0];
     let text = message[1];
+    let sentFile = message[2];
     let lastMessage = messages.length == messageIndex + 1;
+
+    console.log(sentFile);
 
     if (type == HUMANMESSAGE) {
       return (
@@ -179,6 +189,21 @@ Feel free to connect with Nideesh to learn more about his journey and projects!`
                 <ReactMarkdown>{text}</ReactMarkdown>
               </article>
             </Card>
+            {sentFile && (
+              <div className="absolute -bottom-3 right-0 4xl:-top-5 4xl:-left-6 *:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 border-2 shadow-sm rounded-full">
+                <Tooltip className="cursor-none">
+                  <TooltipTrigger className="cursor-none">
+                    <Avatar className="w-5 h-5 4xl:w-17 4xl:h-17">
+                      <AvatarImage src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='-6 -6 36 36' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' style='background-color:white'%3E%3Cpath d='m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551'/%3E%3C/svg%3E" />
+                      <AvatarFallback>NBK</AvatarFallback>
+                    </Avatar>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="cursor-none">
+                    <p>{sentFile.name}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+            )}
           </div>
           {lastMessage && isChatLoading && (
             <div className="relative pl-2">
