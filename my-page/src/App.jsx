@@ -46,17 +46,24 @@ function App() {
   const fileInputDummy = useRef(null);
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("");
+  const [isChatWritten, setIsChatWritten] = useState(true);
+  const [charsAnimated, setCharsAnimated] = useState(0);
   const audioRef = useRef(null);
   const chatEndRef = useRef(null);
 
   const words = ["Nideesh", "GPT"];
   const prompts = [
-    "Summarize my background in 3–5 sentences. Include my education, relevant work experience, notable projects, and any competitions or awards I’ve earned. Focus on giving a clear and concise picture of who I am professionally.",
-    "Compare me to other candidates at a similar stage in their career. Research typical skills, experience, or accomplishments for someone in my field and provide statistics or examples and compare them to me in topics such as technical skills, project depth, awards, or leadership roles.",
-    "Based on the job description below, explain my fit for this role. Focus on alignment with required skills, past experience, and potential contributions.\n\nJob Description:\n[Paste job description here]",
-    "Share a lighthearted or surprising fact about me. Make it authentic and memorable, something that could spark a conversation.",
-    "List 5–7 of my favorite songs. Include a variety of genres or moods if possible, and keep it casual and reflective of my personality.",
+    "Can you summarize Nideesh’s background in 3–5 sentences? I'm looking for a clear snapshot of his education, work experience, notable projects, and any awards or competitions he's been part of. Something that gives me a quick but strong sense of his professional profile.",
+
+    "How does Nideesh compare to other candidates at a similar stage in their career? Include data or typical benchmarks for skills, experience, or accomplishments in his field, and describe where he currently stands relative to those.",
+
+    "Here’s a job description — based on this, how does Nideesh’s background align with the requirements and expectations? Describe where his experience matches and where there may be gaps.\n\nJob Description:\n[Paste job description here]",
+
+    "Tell me a fun or surprising fact about Nideesh — something authentic that reflects his personality or sparks curiosity. Could be a hobby, unusual experience, or just something memorable that breaks the ice.",
+
+    "What are some of Nideesh’s favorite songs? Share 5–7 tracks across different genres or moods if you can — I want to get a casual sense of his personality through the kind of music he enjoys.",
   ];
+  
   const [messages, setMessages] = useState([]);
 
   function handleChangeToMain() {
@@ -112,6 +119,7 @@ function App() {
       let sent = text;
 
       setIsChatMode(true);
+      setIsChatWritten((prev) => !prev);
       setText("");
       setIsChatLoading((prev) => !prev);
       setFile(null);
@@ -196,6 +204,15 @@ Feel free to connect with Nideesh to learn more about his journey and projects!`
                 <ReactMarkdown>{text}</ReactMarkdown>
               ) : isChatLoading ? (
                 <></>
+              ) : !isChatWritten ? (
+                <MarkdownTypewriter
+                  motionProps={{
+                    onAnimationComplete: () =>
+                      setIsChatWritten((prev) => !prev),
+                  }}
+                >
+                  {text}
+                </MarkdownTypewriter>
               ) : (
                 <ReactMarkdown>{text}</ReactMarkdown>
               )}
@@ -467,6 +484,7 @@ Feel free to connect with Nideesh to learn more about his journey and projects!`
               <div className="flex flex-col">
                 <div className="flex flex-row">
                   <Textarea
+                    disabled={!isChatWritten}
                     className="h-20 w-200 4xl:w-370 4xl:h-40 4xl:text-[1.7rem] 4xl:rounded-2xl 4xl:p-4 4xl:pl-6 text-left resize-none scrollbar-thin scroll-smooth cursor-none border-gray-300 4xl:border-2 text-[rgb(0,0,0,75%)] bg-white"
                     placeholder="Ask me anything... this agent knows my resume better than I do"
                     value={text}
@@ -475,13 +493,14 @@ Feel free to connect with Nideesh to learn more about his journey and projects!`
                   <div className="flex flex-col ml-2 space-y-2 4xl:space-y-4 4xl:ml-4">
                     <Button
                       onClick={handleTextSubmit}
-                      disabled={isChatLoading}
+                      disabled={!isChatWritten}
                       className="h-9 w-9 4xl:w-18 4xl:h-18 4xl:rounded-2xl bg-blue-500 border border-blue-500 4xl:border-2 cursor-none transform transition-transform duration-100 hover:scale-110 hover:bg-blue-500"
                     >
                       <Send className="h-4 w-4 4xl:h-8 4xl:w-8" />
                     </Button>
                     <>
                       <Button
+                        disabled={!isChatWritten}
                         className="h-9 w-9 4xl:w-18 4xl:h-18 4xl:rounded-2xl bg-white border border-gray-300 4xl:border-2 cursor-none transform transition-transform duration-100 hover:scale-110 hover:bg-white"
                         onClick={handleFileClick}
                       >
