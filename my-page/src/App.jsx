@@ -1,6 +1,8 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import "./App.css";
+import ReactMarkdown from "react-markdown";
+import { MarkdownTypewriter } from "react-markdown-typewriter";
 
 import { AuroraText } from "@/components/magicui/aurora-text";
 import { AnimatePresence, motion } from "framer-motion";
@@ -25,12 +27,19 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@radix-ui/react-popover";
-import { Input } from "@/components/ui/input";
+
 import { Switch } from "./components/ui/switch";
 import { Label } from "@radix-ui/react-label";
+import { Card } from "./components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "./components/ui/avatar";
 
 function App() {
+  const HUMANMESSAGE = 1;
+  const AIMESSAGE = 0;
+
   const [isIntroVisible, setIsIntroVisible] = useState(true);
+  const [isChatMode, setIsChatMode] = useState(false);
+  const [isChatLoading, setIsChatLoading] = useState(false);
   const [text, setText] = useState("");
   const [darkMode, setDarkMode] = useState(false);
   const [musicOn, setMusicOn] = useState(true);
@@ -38,6 +47,7 @@ function App() {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const audioRef = useRef(null);
+  const chatEndRef = useRef(null);
 
   const words = ["Nideesh", "GPT"];
   const prompts = [
@@ -47,6 +57,7 @@ function App() {
     "Share a lighthearted or surprising fact about me. Make it authentic and memorable, something that could spark a conversation.",
     "List 5–7 of my favorite songs. Include a variety of genres or moods if possible, and keep it casual and reflective of my personality.",
   ];
+  const [messages, setMessages] = useState([]);
 
   function handleChangeToMain() {
     setIsIntroVisible(false);
@@ -88,6 +99,117 @@ function App() {
     });
   }
 
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async function handleTextSubmit() {
+    if (text) {
+      let sent = text;
+
+      setIsChatMode(true);
+      setText("");
+      setIsChatLoading((prev) => !prev);
+      setFile(null);
+
+      let formatSent = [HUMANMESSAGE, sent];
+
+      setMessages((prev) => [...prev, formatSent]);
+
+      await sleep(2000);
+
+      let response = [
+        AIMESSAGE,
+        `# About Nideesh
+
+**Nideesh** is a passionate learner and problem solver with a strong interest in technology and innovation. He enjoys tackling challenging projects that combine creativity and practical impact.
+
+---
+
+## Key Traits
+- Curious and always eager to learn
+- Focused on building meaningful solutions
+- Embraces collaboration and growth
+
+> _“Innovation distinguishes between a leader and a follower.”_ — Steve Jobs
+
+---
+
+### Interests
+- Software development
+- Creative problem solving
+- Exploring new technologies
+
+---
+
+Feel free to connect with Nideesh to learn more about his journey and projects!`,
+      ];
+
+      setMessages((prev) => [...prev, response]);
+
+      setIsChatLoading(false);
+    }
+  }
+
+  function MessageBubble({ message, messageIndex }) {
+    let type = message[0];
+    let text = message[1];
+    let lastMessage = messages.length == messageIndex + 1;
+
+    if (type == HUMANMESSAGE) {
+      return (
+        <>
+          <div className="relative flex justify-end pr-2">
+            <Card className="w-fit h-fit px-7 py-4 bg-blue-100 4xl:px-12 4xl:py-6 4xl:border-4 4xl:rounded-3xl">
+              <article className="prose prose-sm 4xl:prose-2xl">
+                <ReactMarkdown>{text}</ReactMarkdown>
+              </article>
+            </Card>
+          </div>
+          {lastMessage && isChatLoading && (
+            <div className="relative pl-2">
+              <Card className="w-fit h-fit px-7 py-4 4xl:px-12 4xl:py-6 4xl:border-4 4xl:rounded-3xl">
+                <article className="prose prose-sm 4xl:prose-2xl">
+                  <ReactMarkdown>Generating...</ReactMarkdown>
+                </article>
+              </Card>
+              <div className="absolute -top-3 -left-4 4xl:-top-5 4xl:-left-6 *:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 ">
+                <Avatar className="w-10 h-10 4xl:w-17 4xl:h-17">
+                  <AvatarImage src="./src/assets/avatarimage.jpg" />
+                  <AvatarFallback>NBK</AvatarFallback>
+                </Avatar>
+              </div>
+            </div>
+          )}
+        </>
+      );
+    } else if (type == AIMESSAGE) {
+      return (
+        <div className="relative pl-2">
+          <Card className="w-fit h-fit px-7 py-4 4xl:px-12 4xl:py-6 4xl:border-4 4xl:rounded-3xl">
+            <article className="prose prose-sm 4xl:prose-2xl">
+              {!lastMessage ? (
+                <ReactMarkdown>{text}</ReactMarkdown>
+              ) : isChatLoading ? (
+                <></>
+              ) : (
+                <ReactMarkdown>{text}</ReactMarkdown>
+              )}
+            </article>
+          </Card>
+          <div className="absolute -top-3 -left-4 4xl:-top-5 4xl:-left-6 *:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 ">
+            <Avatar className="w-10 h-10 4xl:w-17 4xl:h-17">
+              <AvatarImage src="./src/assets/avatarimage.jpg" />
+              <AvatarFallback>NBK</AvatarFallback>
+            </Avatar>
+          </div>
+        </div>
+      );
+    }
+
+    return <></>;
+  }
+
   useEffect(() => {
     audioRef.current?.play().catch(() => {
       const catchInteract = () => {
@@ -99,11 +221,18 @@ function App() {
     });
   }, []);
 
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
   const containerVariants = {
     hidden: {},
     visible: {
       transition: {
         staggerChildren: 0.5,
+        delayChildren: 0.7,
       },
     },
   };
@@ -116,7 +245,7 @@ function App() {
   const gridDimensions = window.innerWidth < 2560 ? 70 : 140;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-y-8 relative bg-blue-50/50">
+    <div className="min-h-screen flex flex-col items-center justify-center gap-y-8 relative bg-blue-50/50 overflow-hidden">
       <GridPattern
         width={gridDimensions}
         height={gridDimensions}
@@ -133,7 +262,7 @@ function App() {
         className="absolute -z-10 w-50 h-50 4xl:w-90 4xl:h-90 4xl:blur-2xl bg-purple-400 rounded-full blur-lg top-[80%] left-[20%] transform -translate-x-1/2 -translate-y-1/2"
         animate={{ scale: [1.2, 1, 1.2], opacity: [0.5, 1, 0.5] }}
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-      ></motion.div>{" "}
+      ></motion.div>
       <motion.div
         className="absolute -z-10 w-60 h-60 4xl:w-100 4xl:h-100 4xl:blur-2xl bg-green-400 rounded-full blur-2xl top-[80%] left-[90%] transform -translate-x-1/2 -translate-y-1/2"
         animate={{ scale: [1.2, 1, 1.2], opacity: [0.5, 1, 0.5] }}
@@ -143,7 +272,7 @@ function App() {
         className="absolute -z-10 w-30 h-30 4xl:w-70 4xl:h-70 4xl:blur-2xl bg-pink-400 rounded-full blur-lg top-[40%] left-[10%] transform -translate-x-1/2 -translate-y-1/2"
         animate={{ scale: [1, 1.4, 1], opacity: [1, 0.5, 1] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-      ></motion.div>{" "}
+      ></motion.div>
       <AnimatePresence mode="wait">
         {isIntroVisible ? (
           <motion.div
@@ -155,7 +284,6 @@ function App() {
             className="flex flex-col items-center gap-y-8 4xl:gap-y-20"
           >
             <motion.h1
-              layout
               className="text-5xl font-bold tracking-tighter md:text-7xl lg:text-9xl 4xl:text-[14rem] text-center transform transition-transform duration-300 ease-in-out hover:scale-105 flex justify-center"
               initial="hidden"
               animate="visible"
@@ -165,7 +293,6 @@ function App() {
             >
               {words.map((word, idx) => (
                 <motion.span
-                  layout
                   key={idx}
                   className="inline-block mr-2"
                   variants={wordVariants}
@@ -182,7 +309,7 @@ function App() {
 
             <TextAnimate
               className="md:text-2xl text-gray-700 lg:text-xl 4xl:text-4xl"
-              delay={1.5}
+              delay={2.2}
             >
               Click above to learn more, if you want ¯\_(ツ)_/¯
             </TextAnimate>
@@ -276,51 +403,77 @@ function App() {
                         rel="noopener noreferrer"
                       >
                         Music
-                      </a>{" "}
+                      </a>
                       Toggle
                     </Label>
                   </span>
                 </div>
               </PopoverContent>
             </Popover>
+            {isChatMode && (
+              <div className="fixed top-14 bottom-35 w-221 4xl:w-401 4xl:top-30 4xl:bottom-70 overflow-y-auto pl-8 py-1 scrollbar-none space-y-8 -translate-x-5 text-base">
+                {messages.map((item, i) => (
+                  <MessageBubble key={i} message={item} messageIndex={i} />
+                ))}
+                <div ref={chatEndRef} />
+              </div>
+            )}
             <motion.div
               layout="position"
               key="main"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="flex flex-col items-center gap-y-8 4xl:gap-y-14"
+              transition={{
+                duration: 0.5,
+                layout: { duration: 1, ease: "easeInOut" },
+              }}
+              className={`flex flex-col items-center gap-y-8 4xl:gap-y-14 ${
+                isChatMode && !file ? "fixed -bottom-26 4xl:-bottom-47" : ""
+              }
+              
+              ${isChatMode && file ? " fixed -bottom-21 4xl:-bottom-42" : ""}
+              `}
             >
-              <h1
-                className="text-3xl font-bold tracking-tighter md:text-3xl lg:text-6xl 4xl:text-9xl text-center flex justify-center"
-                onClick={() => setIsIntroVisible(false)}
-              >
-                {words.map((word, idx) => (
-                  <motion.span
-                    layout
-                    key={idx}
-                    className="inline-block mr-1.5"
-                    variants={wordVariants}
-                    transition={{ duration: 0.5, ease: "easeIn" }}
-                  >
-                    {word === "GPT" ? (
-                      <AuroraText>{word}</AuroraText>
-                    ) : (
-                      <p>{word}</p>
-                    )}
-                  </motion.span>
-                ))}
-              </h1>
+              {
+                <h1
+                  onClick={() => setIsIntroVisible(false)}
+                  className={`text-3xl font-bold tracking-tighter md:text-3xl lg:text-6xl 4xl:text-9xl text-center flex justify-center ${
+                    isChatMode
+                      ? "opacity-0 pointer-events-none overflow-hidden"
+                      : "opacity-100 h-auto"
+                  }`}
+                >
+                  {words.map((word, idx) => (
+                    <motion.span
+                      layout
+                      key={idx}
+                      className="inline-block mr-1.5"
+                      variants={wordVariants}
+                      transition={{ duration: 0.5, ease: "easeIn" }}
+                    >
+                      {word === "GPT" ? (
+                        <AuroraText>{word}</AuroraText>
+                      ) : (
+                        <p>{word}</p>
+                      )}
+                    </motion.span>
+                  ))}
+                </h1>
+              }
               <div className="flex flex-col">
                 <div className="flex flex-row">
                   <Textarea
-                    className="h-20 w-150 4xl:w-300 4xl:h-40 4xl:text-[1.7rem] 4xl:rounded-2xl 4xl:p-4 4xl:pl-6 text-left resize-none scrollbar-thin scroll-smooth cursor-none border-gray-300 4xl:border-2 text-[rgb(0,0,0,75%)] bg-white"
+                    className="h-20 w-200 4xl:w-370 4xl:h-40 4xl:text-[1.7rem] 4xl:rounded-2xl 4xl:p-4 4xl:pl-6 text-left resize-none scrollbar-thin scroll-smooth cursor-none border-gray-300 4xl:border-2 text-[rgb(0,0,0,75%)] bg-white"
                     placeholder="Ask me anything... this agent knows my resume better than I do"
                     value={text}
                     onChange={handleTextChange}
                   />
                   <div className="flex flex-col ml-2 space-y-2 4xl:space-y-4 4xl:ml-4">
-                    <Button className="h-9 w-9 4xl:w-18 4xl:h-18 4xl:rounded-2xl bg-blue-500 border border-blue-500 4xl:border-2 cursor-none transform transition-transform duration-100 hover:scale-110 hover:bg-blue-500">
+                    <Button
+                      onClick={handleTextSubmit}
+                      disabled={isChatLoading}
+                      className="h-9 w-9 4xl:w-18 4xl:h-18 4xl:rounded-2xl bg-blue-500 border border-blue-500 4xl:border-2 cursor-none transform transition-transform duration-100 hover:scale-110 hover:bg-blue-500"
+                    >
                       <Send className="h-4 w-4 4xl:h-8 4xl:w-8" />
                     </Button>
                     <>
@@ -357,47 +510,56 @@ function App() {
                     </button>
                   </div>
                 )}
-                <motion.div layout="position" className=" 4xl:space-y-4">
-                  <div className="flex justify-center pt-8 space-x-4">
-                    <ShinyButton
-                      variant="outline"
-                      className="cursor-none rounded-3xl bg-white 4xl:p-4 4xl:pl-12 4xl:pr-12 4xl:rounded-full 4xl:border-2"
-                      onClick={() => setText(prompts[0])}
-                    >
-                      Summarize my experience
-                    </ShinyButton>
-                    <ShinyButton
-                      variant="outline"
-                      className="cursor-none rounded-3xl bg-white 4xl:p-4 4xl:pl-12 4xl:pr-12 4xl:rounded-full 4xl:border-2"
-                      onClick={() => setText(prompts[1])}
-                    >
-                      Compare me to peers
-                    </ShinyButton>
-                  </div>
-                  <div className="flex justify-center pt-2 space-x-4 4xl:space-x-8">
-                    <ShinyButton
-                      variant="outline"
-                      className="cursor-none rounded-3xl bg-white 4xl:p-4 4xl:pl-12 4xl:pr-12 4xl:rounded-full 4xl:border-2"
-                      onClick={() => setText(prompts[2])}
-                    >
-                      Explain my role fit
-                    </ShinyButton>
-                    <ShinyButton
-                      variant="outline"
-                      className="cursor-none rounded-3xl bg-white 4xl:p-4 4xl:pl-12 4xl:pr-12 4xl:rounded-full 4xl:border-2"
-                      onClick={() => setText(prompts[3])}
-                    >
-                      Share a fun fact about me
-                    </ShinyButton>
-                    <ShinyButton
-                      variant="outline"
-                      className="cursor-none rounded-3xl bg-white 4xl:p-4 4xl:pl-12 4xl:pr-12 4xl:rounded-full 4xl:border-2"
-                      onClick={() => setText(prompts[4])}
-                    >
-                      List my favorite songs
-                    </ShinyButton>
-                  </div>
-                </motion.div>
+                {
+                  <motion.div
+                    layout="position"
+                    className={`4xl:space-y-4 ${
+                      isChatMode
+                        ? "opacity-0 pointer-events-none overflow-hidden"
+                        : "opacity-100 h-auto"
+                    }`}
+                  >
+                    <div className="flex justify-center pt-8 space-x-4">
+                      <ShinyButton
+                        variant="outline"
+                        className="cursor-none rounded-3xl bg-white 4xl:p-4 4xl:pl-12 4xl:pr-12 4xl:rounded-full 4xl:border-2"
+                        onClick={() => setText(prompts[0])}
+                      >
+                        Summarize my experience
+                      </ShinyButton>
+                      <ShinyButton
+                        variant="outline"
+                        className="cursor-none rounded-3xl bg-white 4xl:p-4 4xl:pl-12 4xl:pr-12 4xl:rounded-full 4xl:border-2"
+                        onClick={() => setText(prompts[1])}
+                      >
+                        Compare me to peers
+                      </ShinyButton>
+                    </div>
+                    <div className="flex justify-center pt-2 space-x-4 4xl:space-x-8">
+                      <ShinyButton
+                        variant="outline"
+                        className="cursor-none rounded-3xl bg-white 4xl:p-4 4xl:pl-12 4xl:pr-12 4xl:rounded-full 4xl:border-2"
+                        onClick={() => setText(prompts[2])}
+                      >
+                        Explain my role fit
+                      </ShinyButton>
+                      <ShinyButton
+                        variant="outline"
+                        className="cursor-none rounded-3xl bg-white 4xl:p-4 4xl:pl-12 4xl:pr-12 4xl:rounded-full 4xl:border-2"
+                        onClick={() => setText(prompts[3])}
+                      >
+                        Share a fun fact about me
+                      </ShinyButton>
+                      <ShinyButton
+                        variant="outline"
+                        className="cursor-none rounded-3xl bg-white 4xl:p-4 4xl:pl-12 4xl:pr-12 4xl:rounded-full 4xl:border-2"
+                        onClick={() => setText(prompts[4])}
+                      >
+                        List my favorite songs
+                      </ShinyButton>
+                    </div>
+                  </motion.div>
+                }
               </div>
             </motion.div>
           </>
