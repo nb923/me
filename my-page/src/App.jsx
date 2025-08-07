@@ -151,7 +151,7 @@ Leadership: Codepath TIP 103 Tech Fellow, Buildspace Lead SWE
 
 Make each response short, maximum 500 words.
 
-Remember to use Markdown syntax to customize the layout of the text to make it easily readable for everyone.
+Remember to use Markdown syntax to customize the layout of the text to make it easily readable for everyone. Do not write in long paragraphs, format it with markdown. Make sure to use a mix of lists, h1, h2, h3, etc. MAKE SURE TO USE MARKDOWN.
 
 Now here is the user query below:
 `;
