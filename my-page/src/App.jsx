@@ -190,16 +190,16 @@ Feel free to connect with Nideesh to learn more about his journey and projects!`
               </article>
             </Card>
             {sentFile && (
-              <div className="absolute -bottom-3 right-0 4xl:-top-5 4xl:-left-6 *:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 border-2 shadow-sm rounded-full">
+              <div className="absolute -bottom-3 right-0 4xl:-bottom-5 *:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 border-2 shadow-sm rounded-full">
                 <Tooltip className="cursor-none">
                   <TooltipTrigger className="cursor-none">
-                    <Avatar className="w-5 h-5 4xl:w-17 4xl:h-17">
+                    <Avatar className="w-5 h-5 4xl:w-10 4xl:h-10">
                       <AvatarImage src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='-6 -6 36 36' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' style='background-color:white'%3E%3Cpath d='m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551'/%3E%3C/svg%3E" />
                       <AvatarFallback>NBK</AvatarFallback>
                     </Avatar>
                   </TooltipTrigger>
-                  <TooltipContent side="bottom" className="cursor-none">
-                    <p>{sentFile.name}</p>
+                  <TooltipContent side="bottom" className="cursor-none 4xl:rounded-2xl">
+                    <p className="4xl:text-2xl 4xl:px-3 4xl:py-2">{sentFile.name}</p>
                   </TooltipContent>
                 </Tooltip>
               </div>
