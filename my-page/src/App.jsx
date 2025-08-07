@@ -71,7 +71,9 @@ function App() {
   }
 
   function handleTextChange(e) {
-    setText(e.target.value);
+    if (e.target.value.length <= 1500) {
+      setText(e.target.value);
+    }
   }
 
   function handleFileClick() {
