@@ -11,7 +11,7 @@ import { Pointer } from "@/components/magicui/pointer";
 import { Textarea } from "./components/ui/textarea";
 import {
   Send,
-  File,
+  File as FileIcon,
   Linkedin,
   Github,
   Paperclip,
@@ -38,6 +38,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+import OpenAI from "openai";
+
 function App() {
   const HUMANMESSAGE = 1;
   const AIMESSAGE = 0;
@@ -53,6 +55,7 @@ function App() {
   const [fileName, setFileName] = useState("");
   const [isChatWritten, setIsChatWritten] = useState(true);
   const [charsAnimated, setCharsAnimated] = useState(0);
+  const [resume, setResume] = useState(null);
   const audioRef = useRef(null);
   const chatEndRef = useRef(null);
 
@@ -69,7 +72,96 @@ function App() {
     "What are some of Nideesh’s favorite songs? Share 5–7 tracks across different genres or moods if you can — I want to get a casual sense of his personality through the kind of music he enjoys.",
   ];
 
+  const sysprompt = `You are an AI agent representing Nideesh on his portfolio site. Visitors will ask you questions about his background, experience, technical skills—especially in software engineering and AI—AI-related projects, academic credentials, awards, and personal interests. Your tone should be casual and friendly (no emojis), and you should always write using Markdown syntax. Use Markdown syntax to customize the layout of the text to make it easily readable for everyone. Always present Nideesh in a positive light. If any weaknesses or challenges come up, mention them briefly and immediately highlight how those experiences made him stronger or helped him improve.
+
+You may use external web searches to benchmark Nideesh’s skills and experience against peers in AI-focused software engineering roles. You also have access to his detailed resume ('nbk-resume.pdf') and any other documents the user uploads; reference those to inform your responses.
+
+Here are some fun facts about Nideesh:
+- He’s moved five times.
+- He’s into music theory and music creation.
+- He enjoys reading webtoons and manhwa.
+- He likes listening to music, mechanical keyboards, and PC building.
+- He enjoys taking on challenges.
+
+Some of his favorite songs (with artists confirmed):
+- **"Heat Waves"** by Glass Animals  
+- **"Creepin’"** by Metro Boomin, The Weeknd & 21 Savage  
+- **"Yeah Right"** by Joji  
+- **"Cradles"** by Sub Urban  
+- **"Mona Lisa"** by Dominic Fike
+- **"Natural"** by Imagine Dragons
+
+Your answers should remain focused on Nideesh’s professional experience, projects, career path, AI/engineering background, or light personal interests like music and hobbies. If a query veers off-topic or becomes offensive, gently redirect with something like:  
+> “I’m here to chat about Nideesh’s background, skills, or interests—ask me about his AI work, engineering projects, or favorite hobbies. I’ll try to answer your question as best as I can if it’s at least mildly on topic and not inappropriate.”
+
+Here is the resume, only use the information if necessary: 
+1
+Nideesh Bharath Kumarbknideesh@gmail.com |linkedin.com/in/bknideesh |github.com/nb923
+Education
+Rutgers University New Brunswick, NJ
+BS in Computer Science and Data Science, Artifical Intelligence Track GPA: 4.0, Expected May 2027
+Experience
+Data Scientist Intern Oct 2024 – Present
+Rutgers IFH New Brunswick, NJ
+•Selected as 1 of 2 candidates from 1,000+ applicants to build ML pipelines on 500M+ record datasets
+•Engineered a production-grade ETL pipeline in SAS to analyze drug safety trends for Medicaid using statistics based risk
+metrics such as z-score and outlier detection
+Software Engineering Fellow Jul 2024 – Jan 2025
+Google + Basta New York, NY
+•Led team as team lead to build algorithmic solutions during a Google HQ NYC, ranking top 10% in challenges
+•Collaborated with Google engineers in 3 long-term mentorships to enhance DSA and communicative skills
+Emerging Tech Intern May 2024 – Aug 2024
+IDEA, Rutgers University New Brunswick, NJ
+•Developed a full-stack course search platform using React, FastAPI, PostgreSQL, supporting 5,000+ course queries
+•Designed an intuitive UI using Figma through 25+ user interviews, leading to streamlining key user flows
+•Enhanced design efficiency with product research, reviewing over 300 pages of peer-reviewed studies
+Data Analyst Intern May 2024 – Aug 2024
+Newark Science and Sustainability Newark, NJ
+•Built data processing workflows using Python/Pandas to visualize survey data from 10+ sustainability conferences
+•Enabled data-driven narrative reports by conducting qualitative insights analysis from 20+ community gardens
+Software Engineer Intern Jun 2022 – Aug 2023
+Manomay Tech Mahwah, NJ
+•Improved site performance by reducing page load time 20% via backend optimizations using Node.js + NGINX
+•Deployed over 10 business client websites by setting up scalable web server infrastructure with Docker + CI/CD
+•Resolved 5+ critical bugs in a Windows app using C# and debugging tools to stabilize business operations
+Projects
+Nutricart - Smart Cart (HackRU Winner) |FastAPI, OpenCV, Tensorflow, MongoDB, Terraform — Link Feb 2025
+•Won Terraform Award out of 200+ teams by deploying a real-time nutrition tracking AI system on smart shopping carts
+•Processed real-time image streams with OpenCV + Tensorflow to classify food items; scaled using FastAPI + MongoDB
+Handheld Gaming Console |Arduino, C++, Flutter — Link Apr 2025
+•Designed embedded system with C++ and microcontroller to run games on OLED; boosted battery life by 35%
+•Enabled sub 100ms cloud gaming with Syncthing + Moonlight by optimizing graphics rendering and latency protocols
+Youtube Trending Sentiment Analysis |FastAPI, PostgreSQL, NLTK — Link Jul 2024
+•Built sentiment pipeline that scraped 100 trending videos/day via Python Cron jobs; parsed comments with
+NLTK/TextBlob
+•Deployed backend with FastAPI and persisted trends to PostgreSQL for analytics and visualization
+KnowJoy – Multimodal Learning Tool |C#, Godot, React — Link Jun 2024
+•Designed gamified learning app using Godot + React, reaching 150+ users and 2,000+ demo views
+•Succeeded in Buildspace S5 as top 5% of 17,000+ developers; led feature development and project management
+Air Quality Maps (1st in CSBase Hackathon) |Flutter, Dart, Google Maps API — Link May 2024
+•Won 1st place out of 400+ teams for an eco-friendly route planning app using Google Maps + AQI data APIs
+•Reduced frontend compute cost by 20% by optimizing API calls via a custom Shelf server on Dart
+Technical Skills
+Languages: Python, JavaScript, TypeScript, SQL, C#, Java, C++, Dart
+Frameworks/Tools: FastAPI, React, Flutter, WPF, Node.js, PostgreSQL, MongoDB
+AI/ML: LangChain/LangGraph (Agents), Rag, TensorFlow, PyTorch, OpenCV, Transformers, Pandas
+Cloud/DevOps: AWS (EC2, S3), Docker, Kubernetes, GitHub Actions, Cron, Terraform
+Awards: HackRU Winner, CS Base Hackathon Winner, Data 101 Hall of Fame
+Leadership: Codepath TIP 103 Tech Fellow, Buildspace Lead SWE
+
+Make each response short, maximum 500 words.
+
+Remember to use Markdown syntax to customize the layout of the text to make it easily readable for everyone.
+
+Now here is the user query below:
+`;
+
   const [messages, setMessages] = useState([]);
+
+  const openai = new OpenAI({
+    apiKey: import.meta.env.VITE_OPENAI_API_KEY,
+    dangerouslyAllowBrowser: true,
+  });
 
   function handleChangeToMain() {
     setIsIntroVisible(false);
@@ -117,14 +209,42 @@ function App() {
     });
   }
 
-  function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+  async function handleChatResponse(messagesState) {
+    const fileUpload =
+      file === null
+        ? null
+        : await openai.files.create({
+            file: file,
+            purpose: "user_data",
+          });
+
+    const response = await openai.responses.create({
+      model: "gpt-5-nano",
+      input: [
+        { role: "system", content: sysprompt },
+        ...messagesState.map(([type, text, f]) => ({
+          role: type == HUMANMESSAGE ? "user" : "assistant",
+          content: text,
+        })),
+        ...(fileUpload != null
+          ? [
+              {
+                role: "user",
+                content: [{ type: "input_file", file_id: fileUpload.id }],
+              },
+            ]
+          : []),
+      ],
+      tools: [{ type: "web_search_preview" }],
+    });
+
+    return response.output_text;
   }
 
   async function handleTextSubmit() {
     if (text) {
-      let sent = text;
-      let sentFile = file;
+      const sent = text;
+      const sentFile = file;
 
       setIsChatMode(true);
       setIsChatWritten((prev) => !prev);
@@ -132,39 +252,11 @@ function App() {
       setIsChatLoading((prev) => !prev);
       setFile(null);
 
-      let formatSent = [HUMANMESSAGE, sent, sentFile];
+      const formatSent = [HUMANMESSAGE, sent, sentFile];
 
       setMessages((prev) => [...prev, formatSent]);
 
-      await sleep(2000);
-
-      let response = [
-        AIMESSAGE,
-        `# About Nideesh
-
-**Nideesh** is a passionate learner and problem solver with a strong interest in technology and innovation. He enjoys tackling challenging projects that combine creativity and practical impact.
-
----
-
-## Key Traits
-- Curious and always eager to learn
-- Focused on building meaningful solutions
-- Embraces collaboration and growth
-
-> _“Innovation distinguishes between a leader and a follower.”_ — Steve Jobs
-
----
-
-### Interests
-- Software development
-- Creative problem solving
-- Exploring new technologies
-
----
-
-Feel free to connect with Nideesh to learn more about his journey and projects!`,
-        null,
-      ];
+      let response = [AIMESSAGE, await handleChatResponse([...messages, formatSent]), null];
 
       setMessages((prev) => [...prev, response]);
 
@@ -177,8 +269,6 @@ Feel free to connect with Nideesh to learn more about his journey and projects!`
     let text = message[1];
     let sentFile = message[2];
     let lastMessage = messages.length == messageIndex + 1;
-
-    console.log(sentFile);
 
     if (type == HUMANMESSAGE) {
       return (
@@ -198,17 +288,22 @@ Feel free to connect with Nideesh to learn more about his journey and projects!`
                       <AvatarFallback>NBK</AvatarFallback>
                     </Avatar>
                   </TooltipTrigger>
-                  <TooltipContent side="bottom" className="cursor-none 4xl:rounded-2xl">
-                    <p className="4xl:text-2xl 4xl:px-3 4xl:py-2">{sentFile.name}</p>
+                  <TooltipContent
+                    side="bottom"
+                    className="cursor-none 4xl:rounded-2xl"
+                  >
+                    <p className="4xl:text-2xl 4xl:px-3 4xl:py-2">
+                      {sentFile.name}
+                    </p>
                   </TooltipContent>
                 </Tooltip>
               </div>
             )}
           </div>
           {lastMessage && isChatLoading && (
-            <div className="relative pl-2">
+            <div className="relative pl-2" {...(lastMessage ? { ref: chatEndRef } : {})}>
               <Card className="w-fit h-fit px-7 py-4 4xl:px-12 4xl:py-6 4xl:border-4 4xl:rounded-3xl">
-                <article className="prose prose-sm 4xl:prose-2xl">
+                <article className="prose prose-sm 4xl:prose-2xl animate-wiggle animate-pulse animate-ease-in-out">
                   <ReactMarkdown>Generating...</ReactMarkdown>
                 </article>
               </Card>
@@ -224,7 +319,7 @@ Feel free to connect with Nideesh to learn more about his journey and projects!`
       );
     } else if (type == AIMESSAGE) {
       return (
-        <div className="relative pl-2">
+        <div className="relative pl-2" {...(lastMessage ? { ref: chatEndRef } : {})}>
           <Card className="w-fit h-fit px-7 py-4 4xl:px-12 4xl:py-6 4xl:border-4 4xl:rounded-3xl">
             <article className="prose prose-sm 4xl:prose-2xl">
               {!lastMessage ? (
@@ -271,9 +366,30 @@ Feel free to connect with Nideesh to learn more about his journey and projects!`
 
   useEffect(() => {
     if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+      chatEndRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }, [messages]);
+
+  useEffect(() => {
+    async function getResumeData() {
+      const response = await fetch("./files/nbk-resume.pdf");
+
+      const blob = await response.blob();
+
+      const resumeFile = new File([blob], "nbk-resume.pdf", {
+        type: "application/pdf",
+      });
+
+      const result = await openai.files.create({
+        file: resumeFile,
+        purpose: "assistants",
+      });
+
+      setResume(result);
+    }
+
+    getResumeData();
+  }, []);
 
   const containerVariants = {
     hidden: {},
@@ -405,7 +521,10 @@ Feel free to connect with Nideesh to learn more about his journey and projects!`
             >
               <Button className="fixed top-4 right-4 4xl:top-8 4xl:right-8 4xl:pt-9 4xl:pb-9 4xl:pl-8 4xl:pr-8 4xl:rounded-2xl 4xl:text-[1.7rem] cursor-none bg-blue-500 hover:scale-105 hover:opacity-80 hover:bg-blue-500 hover:shadow-2xl animate-in fade-in-0 slide-in-from-top-20 duration-500">
                 <span className="flex flex-row space-x-4 items-center">
-                  <File strokeWidth={2} className="h-4 w-4 4xl:h-8 4xl:w-8" />
+                  <FileIcon
+                    strokeWidth={2}
+                    className="h-4 w-4 4xl:h-8 4xl:w-8"
+                  />
                   <p>Resume</p>
                 </span>
               </Button>
@@ -432,6 +551,7 @@ Feel free to connect with Nideesh to learn more about his journey and projects!`
                       className="data-[state=checked]:bg-blue-500 cursor-none"
                       checked={darkMode}
                       onCheckedChange={setDarkMode}
+                      disabled={!isChatWritten}
                     />
                     <Label className="text-sm 4xl:text-[1.7rem] cursor-none relative bottom-[2px]">
                       Dark Mode TBD
@@ -442,6 +562,7 @@ Feel free to connect with Nideesh to learn more about his journey and projects!`
                       className="data-[state=checked]:bg-blue-500 cursor-none"
                       checked={musicOn}
                       onCheckedChange={handleMusicToggle}
+                      disabled={!isChatWritten}
                     />
                     <Label className="text-sm 4xl:text-[1.7rem] cursor-none relative bottom-[2px] flex flex-row space-x-1 4xl:space-x-2">
                       <a
@@ -463,7 +584,6 @@ Feel free to connect with Nideesh to learn more about his journey and projects!`
                 {messages.map((item, i) => (
                   <MessageBubble key={i} message={item} messageIndex={i} />
                 ))}
-                <div ref={chatEndRef} />
               </div>
             )}
             <motion.div
