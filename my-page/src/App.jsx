@@ -68,6 +68,10 @@ function App() {
   }
 
   function handleFileClick() {
+    if (fileInputDummy.current) {
+      fileInputDummy.current.value = null;
+    }
+
     fileInputDummy.current.click();
   }
 
