@@ -41,6 +41,7 @@ import {
 import OpenAI from "openai";
 
 import avatarImage from '../files/avatarimage.png';
+import resumePdf from '../files/nbk-resume.pdf';
 
 function App() {
   const HUMANMESSAGE = 1;
@@ -522,7 +523,7 @@ Now here is the user query below:
               </Button>
             </a>
             <a
-              href="./files/nbk-resume.pdf"
+              href={resumePdf}
               target="_blank"
               rel="noopener noreferrer"
             >
