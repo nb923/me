@@ -297,7 +297,7 @@ Now here is the user query below:
         <>
           <div className="relative flex justify-end pr-2">
             <Card className="w-fit h-fit px-7 py-4 bg-blue-100 4xl:px-12 4xl:py-6 4xl:border-4 4xl:rounded-3xl">
-              <article className="prose prose-sm 4xl:prose-2xl">
+              <article className="prose prose-sm 4xl:prose-2xl whitespace-normal break-words">
                 <ReactMarkdown>{text}</ReactMarkdown>
               </article>
             </Card>
@@ -328,7 +328,7 @@ Now here is the user query below:
               {...(lastMessage ? { ref: chatEndRef } : {})}
             >
               <Card className="w-fit h-fit px-7 py-4 4xl:px-12 4xl:py-6 4xl:border-4 4xl:rounded-3xl">
-                <article className="prose prose-sm 4xl:prose-2xl animate-wiggle animate-pulse animate-ease-in-out">
+                <article className="prose prose-sm 4xl:prose-2xl animate-wiggle animate-pulse animate-ease-in-out whitespace-normal break-words">
                   <ReactMarkdown>Generating...</ReactMarkdown>
                 </article>
               </Card>
@@ -349,7 +349,7 @@ Now here is the user query below:
           {...(lastMessage ? { ref: chatEndRef } : {})}
         >
           <Card className="w-fit h-fit px-7 py-4 4xl:px-12 4xl:py-6 4xl:border-4 4xl:rounded-3xl">
-            <article className="prose prose-sm 4xl:prose-2xl">
+            <article className="prose prose-sm 4xl:prose-2xl whitespace-normal break-words">
               {!lastMessage ? (
                 <ReactMarkdown>{text}</ReactMarkdown>
               ) : isChatLoading ? (
