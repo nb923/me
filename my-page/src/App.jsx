@@ -314,7 +314,7 @@ Now here is the user query below:
               </Card>
               <div className="absolute -top-3 -left-4 4xl:-top-5 4xl:-left-6 *:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 ">
                 <Avatar className="w-10 h-10 4xl:w-17 4xl:h-17">
-                  <AvatarImage src="./src/assets/avatarimage.jpg" />
+                  <AvatarImage src="./src/assets/avatarimage.png" />
                   <AvatarFallback>NBK</AvatarFallback>
                 </Avatar>
               </div>
