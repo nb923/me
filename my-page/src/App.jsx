@@ -153,6 +153,8 @@ Make each response short, maximum 500 words.
 
 Remember to use Markdown syntax to customize the layout of the text to make it easily readable for everyone. Do not write in long paragraphs, format it with markdown. Make sure to use a mix of lists, h1, h2, h3, etc. MAKE SURE TO USE MARKDOWN.
 
+Make sure if the user query is not on topic about Nideesh, his experience, his interests, or anything relevant to Nideesh 
+
 Now here is the user query below:
 `;
 
@@ -234,6 +236,9 @@ Now here is the user query below:
               },
             ]
           : []),
+          { role: "system", content: `Remember, answers should remain focused on Nideesh’s professional experience, projects, career path, AI/engineering background, or light personal interests like music and hobbies. If a query veers off-topic or becomes offensive, gently redirect with something like:  
+> “I’m here to chat about Nideesh’s background, skills, or interests—ask me about his AI work, engineering projects, or favorite hobbies.” Immediately reroute the topic multiple times highlighting that this is about Nideesh and his experience and interests.
+`},
       ],
       tools: [{ type: "web_search_preview" }],
     });
