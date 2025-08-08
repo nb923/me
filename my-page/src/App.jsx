@@ -40,8 +40,8 @@ import {
 
 import OpenAI from "openai";
 
-import avatarImage from '../files/avatarimage.png';
-import resumePdf from '../files/nbk-resume.pdf';
+import avatarImage from "../files/avatarimage.png";
+import resumePdf from "../files/nbk-resume.pdf";
 
 function App() {
   const HUMANMESSAGE = 1;
@@ -178,6 +178,13 @@ Now here is the user query below:
     }
   }
 
+  function handleTextEnter(e) {
+    if (e.keyCode === 13 && !e.shiftKey) {
+      e.preventDefault()
+      handleTextSubmit();
+    }
+  }
+
   function handleFileClick() {
     if (fileInputDummy.current) {
       fileInputDummy.current.value = null;
@@ -239,9 +246,12 @@ Now here is the user query below:
               },
             ]
           : []),
-          { role: "system", content: `Remember, answers should remain focused on Nideesh’s professional experience, projects, career path, AI/engineering background, or light personal interests like music and hobbies. If a query veers off-topic or becomes offensive, gently redirect with something like:  
+        {
+          role: "system",
+          content: `Remember, answers should remain focused on Nideesh’s professional experience, projects, career path, AI/engineering background, or light personal interests like music and hobbies. If a query veers off-topic or becomes offensive, gently redirect with something like:  
 > “I’m here to chat about Nideesh’s background, skills, or interests—ask me about his AI work, engineering projects, or favorite hobbies.” Immediately reroute the topic multiple times highlighting that this is about Nideesh and his experience and interests.
-`},
+`,
+        },
       ],
       tools: [{ type: "web_search_preview" }],
     });
@@ -264,7 +274,11 @@ Now here is the user query below:
 
       setMessages((prev) => [...prev, formatSent]);
 
-      let response = [AIMESSAGE, await handleChatResponse([...messages, formatSent]), null];
+      let response = [
+        AIMESSAGE,
+        await handleChatResponse([...messages, formatSent]),
+        null,
+      ];
 
       setMessages((prev) => [...prev, response]);
 
@@ -309,7 +323,10 @@ Now here is the user query below:
             )}
           </div>
           {lastMessage && isChatLoading && (
-            <div className="relative pl-2" {...(lastMessage ? { ref: chatEndRef } : {})}>
+            <div
+              className="relative pl-2"
+              {...(lastMessage ? { ref: chatEndRef } : {})}
+            >
               <Card className="w-fit h-fit px-7 py-4 4xl:px-12 4xl:py-6 4xl:border-4 4xl:rounded-3xl">
                 <article className="prose prose-sm 4xl:prose-2xl animate-wiggle animate-pulse animate-ease-in-out">
                   <ReactMarkdown>Generating...</ReactMarkdown>
@@ -327,7 +344,10 @@ Now here is the user query below:
       );
     } else if (type == AIMESSAGE) {
       return (
-        <div className="relative pl-2" {...(lastMessage ? { ref: chatEndRef } : {})}>
+        <div
+          className="relative pl-2"
+          {...(lastMessage ? { ref: chatEndRef } : {})}
+        >
           <Card className="w-fit h-fit px-7 py-4 4xl:px-12 4xl:py-6 4xl:border-4 4xl:rounded-3xl">
             <article className="prose prose-sm 4xl:prose-2xl">
               {!lastMessage ? (
@@ -522,11 +542,7 @@ Now here is the user query below:
                 </span>
               </Button>
             </a>
-            <a
-              href={resumePdf}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a href={resumePdf} target="_blank" rel="noopener noreferrer">
               <Button className="fixed top-4 right-4 4xl:top-8 4xl:right-8 4xl:pt-9 4xl:pb-9 4xl:pl-8 4xl:pr-8 4xl:rounded-2xl 4xl:text-[1.7rem] cursor-none bg-blue-500 hover:scale-105 hover:opacity-80 hover:bg-blue-500 hover:shadow-2xl animate-in fade-in-0 slide-in-from-top-20 duration-500">
                 <span className="flex flex-row space-x-4 items-center">
                   <FileIcon
@@ -644,6 +660,7 @@ Now here is the user query below:
                     placeholder="Ask me anything... this agent knows my resume better than I do"
                     value={text}
                     onChange={handleTextChange}
+                    onKeyDown={handleTextEnter}
                   />
                   <div className="flex flex-col ml-2 space-y-2 4xl:space-y-4 4xl:ml-4">
                     <Button
