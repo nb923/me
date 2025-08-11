@@ -14,7 +14,7 @@ resume_db_path = "./resume_vector_db.parquet"
 interests_db_path = "./interests_vector_db.parquet"
 embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
 
-tavily_client = TavilyClient(os.getenv("TAVILY_API_KEY"))
+tavily_client = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
 
 resume_vector_db = SKLearnVectorStore(
     embedding=embedding, persist_path=resume_db_path, serializer="parquet"
