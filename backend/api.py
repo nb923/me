@@ -92,7 +92,7 @@ async def chat_response(messages: str = Form(...), file: Optional[UploadFile] = 
         for page in reader.pages:
             file_text += page.extract_text()
     
-    inp_modified = [{"role": m.role, "content": m.content} for m in inp]
+    inp_modified = [{"role": m["role"], "content": m["content"]} for m in inp]    
     
     input_data = {
         "messages": [
