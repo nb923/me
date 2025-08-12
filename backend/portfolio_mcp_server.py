@@ -27,21 +27,29 @@ interests_vector_db = SKLearnVectorStore(
 loader = PyPDFLoader("./assets/nideesh-bk-resume.pdf", mode="single")
 docs = loader.load()
 
-@mcp.tool(description="Search Nideesh's resume for relevant sections matching the query string and return those snippets.")
+with open("./assets/project-links.txt", "r", encoding="utf-8") as f:
+    text_content = f.read()
+
+@mcp.tool(description="Use `query_resume` for targeted questions about Nideesh’s professional background. "
+        "Examples: 'What did Nideesh do in this experience?', 'Which project used TensorFlow?', "
+        "'Where did he work on data visualization?'. "
+        "This is for *specific* lookups, not for listing everything.")
 def query_resume(query: str):
     results = resume_vector_db.similarity_search(query)
     return [result.page_content for result in results]
 
-@mcp.tool(description="Search Nideesh's interests text for relevant sections matching the query string and return those snippets.")
+@mcp.tool(description="Search Nideesh's personal interests, which may include music, hobbies, fun facts, favorite movies/TV shows, books, foods, quotes, and memorable experiences.")
 def query_interests(query: str):
     results = interests_vector_db.similarity_search(query)
     return [result.page_content for result in results]
 
-@mcp.tool(description="Return the full content of Nideesh's resume as a single text string.")
+@mcp.tool(description="Use `resume_dump` to retrieve complete lists from Nideesh’s resume. "
+        "Examples: 'List all projects', 'List all work experiences', 'List all programming languages'. "
+        "This is for *full section dumps* instead of answering a targeted question.")
 def resume_dump():
-    return docs[0].page_content
+    return (docs[0].page_content + "\n" + text_content)
 
-@mcp.tool(description="Search the web for information that you may not known.")
+@mcp.tool(description="Search the web for information not found in the current context or for filling in knowledge gaps about a topic.")
 def search_web(query: str):
     response = tavily_client.search(query=query)
     return response["results"]

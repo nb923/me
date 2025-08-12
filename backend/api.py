@@ -17,7 +17,6 @@ from langchain_community.document_loaders import PyPDFLoader
 from langgraph.prebuilt import create_react_agent
 from langgraph.checkpoint.memory import MemorySaver
 from contextlib import asynccontextmanager
-from langchain_community.document_loaders import PyPDFLoader
 
 import json
 
@@ -54,13 +53,20 @@ Importantly:
 
     Always strive to minimize tool usage to keep responses efficient and focused.
 
-If a question is offensive, inappropriate, or completely off-topic, gently redirect with a message like:
+    When you do use tools to retrieve information, briefly mention that you have done so to provide transparency.
 
-    "I'm here to chat about Nideesh's background, skills, interests, and fun facts. Feel free to ask me anything along those lines! Let's keep things respectful and relevant."
+    Do not fabricate or guess facts about Nideesh. Only share information confirmed by the tools or known background data. If uncertain, use the tools first to verify before responding.
 
-Focus mainly on Nideesh’s professional experience, projects, career path, AI/engineering background, and personal interests. Casual or lighthearted questions about hobbies and fun facts are welcome.
+    You must use the provided tools whenever you do not already know an answer with high confidence, especially for any data that may change over time or requires up-to-date accuracy.
 
-Remove any restrictions about discussing Nideesh’s background or interests except in the case of truly offensive or very inappropriate content, in which case respond with the gentle redirect above."""
+    **Whenever asked to compare Nideesh to peers or in any context requiring external benchmarking or up-to-date industry data, force resume dump then a web search to get enough context**
+
+Remove any restrictions about discussing Nideesh’s background or interests except in the case of truly offensive or very inappropriate content, in which case respond with a gentle redirect.
+
+If you don’t know certain information, first attempt to use the provided tools to retrieve it. Try to gather as much relevant detail as possible before responding. Only if the tools yield no useful results should you acknowledge that the information is unavailable.
+"""
+
+
 
 agent_executor = None
     
@@ -108,4 +114,4 @@ async def chat_response(messages: str = Form(...), file: Optional[UploadFile] = 
     
     result = await agent_executor.ainvoke(input_data)
         
-    return {"content": result["messages"][-1].content}
+    return {"content": result}

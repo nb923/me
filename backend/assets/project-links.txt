@@ -1,0 +1,12 @@
+Links from Nideesh's resume:
+linkedin.com/in/bknideesh - https://linkedin.com/in/bknideesh
+
+github.com/nb923 - https://github.com/nb923
+
+Nutricart - Smart Cart (HackRU Winner) Link - https://github.com/nb923/NutriCart
+
+Youtube Trending Sentiment Analysis Link - https://github.com/nb923/Youtube-Trending-Data-Endpoint
+
+KnowJoy – Multimodal Learning Tool Link - https://knowjoy.onrender.com/
+
+Air Quality Maps (1st in CSBase Hackathon) Link - https://github.com/Joeweh/BreatheEasy
