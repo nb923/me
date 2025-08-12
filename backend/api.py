@@ -22,6 +22,14 @@ from langchain_community.document_loaders import PyPDFLoader
 import json
 
 load_dotenv()
+
+for key in ["GROQ_API_KEY", "TAVILY_API_KEY"]:
+    val = os.getenv(key)
+    if val:
+        os.environ[key] = val
+    else:
+        raise EnvironmentError(f"api.py {key} is not set.")
+
 os.environ["GROQ_API_KEY"] = os.getenv("GROQ_API_KEY")
 
 model = ChatGroq(model="deepseek-r1-distill-llama-70b", temperature=0)

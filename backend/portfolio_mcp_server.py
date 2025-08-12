@@ -9,6 +9,13 @@ from tavily import TavilyClient
 
 load_dotenv()
 
+for key in ["GROQ_API_KEY", "TAVILY_API_KEY"]:
+    val = os.getenv(key)
+    if val:
+        os.environ[key] = val
+    else:
+        raise EnvironmentError(f"mcp.py {key} is not set.")
+
 os.environ["TAVILY_API_KEY"] = os.getenv("TAVILY_API_KEY")
 
 mcp = FastMCP("Portfolio Agent Tools")
