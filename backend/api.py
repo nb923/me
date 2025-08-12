@@ -4,7 +4,7 @@ import PyPDF2
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from typing import List, Optional
-from fastapi import FastAPI, File, UploadFile, Form
+from fastapi import FastAPI, File, UploadFile, Form, Request
 from pydantic import BaseModel  
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
@@ -17,6 +17,14 @@ from langchain_community.document_loaders import PyPDFLoader
 from langgraph.prebuilt import create_react_agent
 from langgraph.checkpoint.memory import MemorySaver
 from contextlib import asynccontextmanager
+
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
 
 import json
 
@@ -34,6 +42,12 @@ server_params = StdioServerParameters(
         "TAVILY_API_KEY": os.getenv("TAVILY_API_KEY")
     }
 )
+
+limiter = Limiter(key_func=get_remote_address)
+
+origins = [
+    "https://nideesh.ai"
+]
 
 system_prompt = """You are an AI agent representing Nideesh on his portfolio site. Visitors will ask you questions about his background, experience, technical skills—especially in software engineering and AI-related projects—academic credentials, awards, and personal interests.
 
@@ -88,9 +102,26 @@ async def lifespan(app: FastAPI):
             yield
             
 app = FastAPI(lifespan = lifespan)
+app.state.limiter = limiter
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins = origins,
+    allow_credentials = False,
+    allow_methods = ["*"],
+    allow_headers = ["*"],
+)
+app.add_middleware(SlowAPIMiddleware)
+
+@app.exception_handler(RateLimitExceeded)
+async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
+    return JSONResponse(
+        status_code=200,
+        content={"message": "Too many requests. Please wait a minute before trying again."},
+    )
 
 @app.post("/chat")
-async def chat_response(messages: str = Form(...), file: Optional[UploadFile] = File(None)):
+@limiter.limit("5/minute")
+async def chat_response(request: Request, messages: str = Form(...), file: Optional[UploadFile] = File(None)):
     messages_data = json.loads(messages)
     inp = messages_data["messages"]
     file_text = ""
