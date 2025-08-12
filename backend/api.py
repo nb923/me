@@ -46,7 +46,8 @@ server_params = StdioServerParameters(
 limiter = Limiter(key_func=get_remote_address)
 
 origins = [
-    "https://nideesh.ai"
+    "https://nideesh.ai",
+    "https://www.nideesh.ai"
 ]
 
 system_prompt = """You are an AI agent representing Nideesh on his portfolio site. Visitors will ask you questions about his background, experience, technical skills—especially in software engineering and AI-related projects—academic credentials, awards, and personal interests.
