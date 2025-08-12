@@ -176,4 +176,4 @@ async def chat_response(request: Request, messages: str = Form(...), file: Optio
     
     result = await agent_executor.ainvoke(input_data)
         
-    return {"content": result["messages"]}
+    return {"content": result["messages"][-1].content}
