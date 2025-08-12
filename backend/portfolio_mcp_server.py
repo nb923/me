@@ -5,16 +5,18 @@ from mcp.server.fastmcp import FastMCP
 from langchain_community.vectorstores import SKLearnVectorStore
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
-# from tavily import TavilyClient
+from tavily import TavilyClient
 
 load_dotenv()
+
+os.environ["TAVILY_API_KEY"] = os.getenv("TAVILY_API_KEY")
 
 mcp = FastMCP("Portfolio Agent Tools")
 resume_db_path = "./resume_vector_db.parquet"
 interests_db_path = "./interests_vector_db.parquet"
 embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
 
-# tavily_client = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
+tavily_client = TavilyClient()
 
 resume_vector_db = SKLearnVectorStore(
     embedding=embedding, persist_path=resume_db_path, serializer="parquet"
@@ -41,10 +43,10 @@ def query_interests(query: str):
 def resume_dump():
     return docs[0].page_content
 
-# @mcp.tool(description="Search the web for information that you may not known.")
-# def search_web(query: str):
-#     response = tavily_client.search(query=query)
-#     return response["results"]
+@mcp.tool(description="Search the web for information that you may not known.")
+def search_web(query: str):
+    response = tavily_client.search(query=query)
+    return response["results"]
     
 
 if __name__ == "__main__":
