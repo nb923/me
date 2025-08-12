@@ -107,7 +107,7 @@ app.state.limiter = limiter
 app.add_middleware(
     CORSMiddleware,
     allow_origins = origins,
-    allow_credentials = False,
+    allow_credentials = True,
     allow_methods = ["*"],
     allow_headers = ["*"],
 )
@@ -146,4 +146,4 @@ async def chat_response(request: Request, messages: str = Form(...), file: Optio
     
     result = await agent_executor.ainvoke(input_data)
         
-    return {"content": result["messages"][-1].content}
+    return {"content": result["messages"]}
