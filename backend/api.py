@@ -114,4 +114,4 @@ async def chat_response(messages: str = Form(...), file: Optional[UploadFile] = 
     
     result = await agent_executor.ainvoke(input_data)
         
-    return {"content": result}
+    return {"content": result["messages"][-1].content}
