@@ -9,21 +9,12 @@ from tavily import TavilyClient
 
 load_dotenv()
 
-for key in ["GROQ_API_KEY", "TAVILY_API_KEY"]:
-    val = os.getenv(key)
-    if val:
-        os.environ[key] = val
-    else:
-        raise EnvironmentError(f"mcp.py {key} is not set.")
-
-os.environ["TAVILY_API_KEY"] = os.getenv("TAVILY_API_KEY")
-
 mcp = FastMCP("Portfolio Agent Tools")
 resume_db_path = "./resume_vector_db.parquet"
 interests_db_path = "./interests_vector_db.parquet"
 embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
 
-tavily_client = TavilyClient()
+tavily_client = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
 
 resume_vector_db = SKLearnVectorStore(
     embedding=embedding, persist_path=resume_db_path, serializer="parquet"

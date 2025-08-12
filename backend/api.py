@@ -23,13 +23,6 @@ import json
 
 load_dotenv()
 
-for key in ["GROQ_API_KEY", "TAVILY_API_KEY"]:
-    val = os.getenv(key)
-    if val:
-        os.environ[key] = val
-    else:
-        raise EnvironmentError(f"api.py {key} is not set.")
-
 os.environ["GROQ_API_KEY"] = os.getenv("GROQ_API_KEY")
 
 model = ChatGroq(model="deepseek-r1-distill-llama-70b", temperature=0)
@@ -37,6 +30,10 @@ model = ChatGroq(model="deepseek-r1-distill-llama-70b", temperature=0)
 server_params = StdioServerParameters(
     command="python",
     args=["./portfolio_mcp_server.py"],
+    env={
+        "GROQ_API_KEY": os.getenv("GROQ_API_KEY"),
+        "TAVILY_API_KEY": os.getenv("TAVILY_API_KEY")
+    }
 )
 
 system_prompt = """You are an AI agent representing Nideesh on his portfolio site. Visitors will ask you questions about his background, experience, technical skills—especially in software engineering and AI-related projects—academic credentials, awards, and personal interests.
