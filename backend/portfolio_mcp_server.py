@@ -43,8 +43,9 @@ def query_interests(query: str):
     results = interests_vector_db.similarity_search(query)
     return [result.page_content for result in results]
 
-@mcp.tool(description="Use `resume_dump` to retrieve complete lists from Nideesh’s resume. "
+@mcp.tool(description="Use `resume_dump` to retrieve complete lists from Nideesh's resume. "
         "Examples: 'List all projects', 'List all work experiences', 'List all programming languages'. "
+        "This also contains links to all projects and Nideesh's social media profiles. "
         "This is for *full section dumps* instead of answering a targeted question.")
 def resume_dump():
     return (docs[0].page_content + "\n" + text_content)
