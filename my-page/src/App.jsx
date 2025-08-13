@@ -38,6 +38,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+import remarkGfm from "remark-gfm";
+
 import avatarImage from "../files/avatarimage.png";
 import resumePdf from "../files/nbk-resume.pdf";
 
@@ -147,10 +149,13 @@ function App() {
     );
 
     try {
-      const response = await fetch("https://portfolio-backend-xs4b.onrender.com/chat", {
-        method: "POST",
-        body: formData
-      });
+      const response = await fetch(
+        "https://portfolio-backend-xs4b.onrender.com/chat",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         return "Error during llm generation";
@@ -202,7 +207,55 @@ function App() {
           <div className="relative flex justify-end pr-2">
             <Card className="w-fit h-fit px-7 py-4 bg-blue-100 4xl:px-12 4xl:py-6 4xl:border-4 4xl:rounded-3xl">
               <article className="prose prose-sm 4xl:prose-2xl whitespace-normal break-words">
-                <ReactMarkdown>{text}</ReactMarkdown>
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    table: ({ children, ...props }) => (
+                      <div className="overflow-x-auto my-4">
+                        <table
+                          className="min-w-full border-collapse border border-gray-300"
+                          {...props}
+                        >
+                          {children}
+                        </table>
+                      </div>
+                    ),
+                    thead: ({ children, ...props }) => (
+                      <thead className="bg-gray-50" {...props}>
+                        {children}
+                      </thead>
+                    ),
+                    th: ({ children, ...props }) => (
+                      <th
+                        className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-900"
+                        {...props}
+                      >
+                        {children}
+                      </th>
+                    ),
+                    td: ({ children, ...props }) => (
+                      <td
+                        className="border border-gray-300 px-4 py-2 text-gray-700"
+                        {...props}
+                      >
+                        {children}
+                      </td>
+                    ),
+                    tbody: ({ children, ...props }) => (
+                      <tbody {...props}>{children}</tbody>
+                    ),
+                    tr: ({ children, ...props }) => (
+                      <tr
+                        className="even:bg-gray-50 hover:bg-gray-100 transition-colors"
+                        {...props}
+                      >
+                        {children}
+                      </tr>
+                    ),
+                  }}
+                >
+                  {text}
+                </ReactMarkdown>
               </article>
             </Card>
             {sentFile && (
@@ -233,7 +286,55 @@ function App() {
             >
               <Card className="w-fit h-fit px-7 py-4 4xl:px-12 4xl:py-6 4xl:border-4 4xl:rounded-3xl">
                 <article className="prose prose-sm 4xl:prose-2xl animate-wiggle animate-pulse animate-ease-in-out whitespace-normal break-words">
-                  <ReactMarkdown>Generating...</ReactMarkdown>
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      table: ({ children, ...props }) => (
+                        <div className="overflow-x-auto my-4">
+                          <table
+                            className="min-w-full border-collapse border border-gray-300"
+                            {...props}
+                          >
+                            {children}
+                          </table>
+                        </div>
+                      ),
+                      thead: ({ children, ...props }) => (
+                        <thead className="bg-gray-50" {...props}>
+                          {children}
+                        </thead>
+                      ),
+                      th: ({ children, ...props }) => (
+                        <th
+                          className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-900"
+                          {...props}
+                        >
+                          {children}
+                        </th>
+                      ),
+                      td: ({ children, ...props }) => (
+                        <td
+                          className="border border-gray-300 px-4 py-2 text-gray-700"
+                          {...props}
+                        >
+                          {children}
+                        </td>
+                      ),
+                      tbody: ({ children, ...props }) => (
+                        <tbody {...props}>{children}</tbody>
+                      ),
+                      tr: ({ children, ...props }) => (
+                        <tr
+                          className="even:bg-gray-50 hover:bg-gray-100 transition-colors"
+                          {...props}
+                        >
+                          {children}
+                        </tr>
+                      ),
+                    }}
+                  >
+                    Generating...
+                  </ReactMarkdown>
                 </article>
               </Card>
               <div className="absolute -top-3 -left-4 4xl:-top-5 4xl:-left-6 *:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 ">
@@ -255,11 +356,104 @@ function App() {
           <Card className="w-fit h-fit px-7 py-4 4xl:px-12 4xl:py-6 4xl:border-4 4xl:rounded-3xl">
             <article className="prose prose-sm 4xl:prose-2xl whitespace-normal break-words">
               {!lastMessage ? (
-                <ReactMarkdown>{text}</ReactMarkdown>
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    table: ({ children, ...props }) => (
+                      <div className="overflow-x-auto my-4">
+                        <table
+                          className="min-w-full border-collapse border border-gray-300"
+                          {...props}
+                        >
+                          {children}
+                        </table>
+                      </div>
+                    ),
+                    thead: ({ children, ...props }) => (
+                      <thead className="bg-gray-50" {...props}>
+                        {children}
+                      </thead>
+                    ),
+                    th: ({ children, ...props }) => (
+                      <th
+                        className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-900"
+                        {...props}
+                      >
+                        {children}
+                      </th>
+                    ),
+                    td: ({ children, ...props }) => (
+                      <td
+                        className="border border-gray-300 px-4 py-2 text-gray-700"
+                        {...props}
+                      >
+                        {children}
+                      </td>
+                    ),
+                    tbody: ({ children, ...props }) => (
+                      <tbody {...props}>{children}</tbody>
+                    ),
+                    tr: ({ children, ...props }) => (
+                      <tr
+                        className="even:bg-gray-50 hover:bg-gray-100 transition-colors"
+                        {...props}
+                      >
+                        {children}
+                      </tr>
+                    ),
+                  }}
+                >
+                  {text}
+                </ReactMarkdown>
               ) : isChatLoading ? (
                 <></>
               ) : !isChatWritten ? (
                 <MarkdownTypewriter
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    table: ({ children, ...props }) => (
+                      <div className="overflow-x-auto my-4">
+                        <table
+                          className="min-w-full border-collapse border border-gray-300"
+                          {...props}
+                        >
+                          {children}
+                        </table>
+                      </div>
+                    ),
+                    thead: ({ children, ...props }) => (
+                      <thead className="bg-gray-50" {...props}>
+                        {children}
+                      </thead>
+                    ),
+                    th: ({ children, ...props }) => (
+                      <th
+                        className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-900"
+                        {...props}
+                      >
+                        {children}
+                      </th>
+                    ),
+                    td: ({ children, ...props }) => (
+                      <td
+                        className="border border-gray-300 px-4 py-2 text-gray-700"
+                        {...props}
+                      >
+                        {children}
+                      </td>
+                    ),
+                    tbody: ({ children, ...props }) => (
+                      <tbody {...props}>{children}</tbody>
+                    ),
+                    tr: ({ children, ...props }) => (
+                      <tr
+                        className="even:bg-gray-50 hover:bg-gray-100 transition-colors"
+                        {...props}
+                      >
+                        {children}
+                      </tr>
+                    ),
+                  }}
                   motionProps={{
                     onAnimationComplete: () =>
                       setIsChatWritten((prev) => !prev),
@@ -268,7 +462,55 @@ function App() {
                   {text}
                 </MarkdownTypewriter>
               ) : (
-                <ReactMarkdown>{text}</ReactMarkdown>
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    table: ({ children, ...props }) => (
+                      <div className="overflow-x-auto my-4">
+                        <table
+                          className="min-w-full border-collapse border border-gray-300"
+                          {...props}
+                        >
+                          {children}
+                        </table>
+                      </div>
+                    ),
+                    thead: ({ children, ...props }) => (
+                      <thead className="bg-gray-50" {...props}>
+                        {children}
+                      </thead>
+                    ),
+                    th: ({ children, ...props }) => (
+                      <th
+                        className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-900"
+                        {...props}
+                      >
+                        {children}
+                      </th>
+                    ),
+                    td: ({ children, ...props }) => (
+                      <td
+                        className="border border-gray-300 px-4 py-2 text-gray-700"
+                        {...props}
+                      >
+                        {children}
+                      </td>
+                    ),
+                    tbody: ({ children, ...props }) => (
+                      <tbody {...props}>{children}</tbody>
+                    ),
+                    tr: ({ children, ...props }) => (
+                      <tr
+                        className="even:bg-gray-50 hover:bg-gray-100 transition-colors"
+                        {...props}
+                      >
+                        {children}
+                      </tr>
+                    ),
+                  }}
+                >
+                  {text}
+                </ReactMarkdown>
               )}
             </article>
           </Card>

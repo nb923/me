@@ -32,6 +32,7 @@
     "react-markdown": "^10.1.0",
     "react-markdown-typewriter": "^1.1.4",
     "react-pdf": "^10.0.1",
+    "remark-gfm": "^4.0.1",
     "tailwind-merge": "^3.3.1",
     "tailwind-scrollbar-hide": "^4.0.0"
   },
