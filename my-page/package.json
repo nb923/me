@@ -12,6 +12,7 @@
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.14",
     "@radix-ui/react-avatar": "^1.1.10",
+    "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-popover": "^1.1.14",
     "@radix-ui/react-slot": "^1.2.3",
@@ -28,10 +29,12 @@
     "pdf.js-extract": "^0.2.1",
     "pdfjs-dist": "^5.4.54",
     "react": "^19.1.0",
+    "react-device-detect": "^2.2.3",
     "react-dom": "^19.1.0",
     "react-markdown": "^10.1.0",
     "react-markdown-typewriter": "^1.1.4",
     "react-pdf": "^10.0.1",
+    "react-responsive": "^10.0.1",
     "remark-gfm": "^4.0.1",
     "tailwind-merge": "^3.3.1",
     "tailwind-scrollbar-hide": "^4.0.0"
