@@ -87,6 +87,10 @@ function App() {
     query: "(max-width: 670px) and (orientation: landscape)",
   });
 
+  const isShortScreen = useMediaQuery({
+    query: "(max-height: 380px) and (orientation: landscape)",
+  });
+
   const audioRef = useRef(null);
   const chatEndRef = useRef(null);
 
@@ -1167,7 +1171,11 @@ function App() {
                         : "opacity-100 h-auto"
                     }`}
                   >
-                    <div className={`flex justify-center lg:pt-8 space-x-4 ${file && "not-lg:pt-6"}`}>
+                    <div
+                      className={`flex justify-center lg:pt-8 space-x-4 ${
+                        file && "not-lg:pt-6"
+                      }`}
+                    >
                       <ShinyButton
                         variant="outline"
                         className="cursor-none rounded-3xl bg-white 4xl:p-4 4xl:pl-12 4xl:pr-12 4xl:rounded-full 4xl:border-2"
@@ -1183,29 +1191,31 @@ function App() {
                         Compare me to peers
                       </ShinyButton>
                     </div>
-                    <div className="flex justify-center pt-2 space-x-4 4xl:space-x-8">
-                      <ShinyButton
-                        variant="outline"
-                        className="cursor-none rounded-3xl bg-white 4xl:p-4 4xl:pl-12 4xl:pr-12 4xl:rounded-full 4xl:border-2"
-                        onClick={() => setText(prompts[2])}
-                      >
-                        Explain my role fit
-                      </ShinyButton>
-                      <ShinyButton
-                        variant="outline"
-                        className="cursor-none rounded-3xl bg-white 4xl:p-4 4xl:pl-12 4xl:pr-12 4xl:rounded-full 4xl:border-2"
-                        onClick={() => setText(prompts[3])}
-                      >
-                        Share a fun fact about me
-                      </ShinyButton>
-                      <ShinyButton
-                        variant="outline"
-                        className="cursor-none rounded-3xl bg-white 4xl:p-4 4xl:pl-12 4xl:pr-12 4xl:rounded-full 4xl:border-2"
-                        onClick={() => setText(prompts[4])}
-                      >
-                        List my favorite songs
-                      </ShinyButton>
-                    </div>
+                    {!isShortScreen && (
+                      <div className="flex justify-center pt-2 space-x-4 4xl:space-x-8">
+                        <ShinyButton
+                          variant="outline"
+                          className="cursor-none rounded-3xl bg-white 4xl:p-4 4xl:pl-12 4xl:pr-12 4xl:rounded-full 4xl:border-2"
+                          onClick={() => setText(prompts[2])}
+                        >
+                          Explain my role fit
+                        </ShinyButton>
+                        <ShinyButton
+                          variant="outline"
+                          className="cursor-none rounded-3xl bg-white 4xl:p-4 4xl:pl-12 4xl:pr-12 4xl:rounded-full 4xl:border-2"
+                          onClick={() => setText(prompts[3])}
+                        >
+                          Share a fun fact about me
+                        </ShinyButton>
+                        <ShinyButton
+                          variant="outline"
+                          className="cursor-none rounded-3xl bg-white 4xl:p-4 4xl:pl-12 4xl:pr-12 4xl:rounded-full 4xl:border-2"
+                          onClick={() => setText(prompts[4])}
+                        >
+                          List my favorite songs
+                        </ShinyButton>
+                      </div>
+                    )}
                   </motion.div>
                 )}
               </motion.div>
