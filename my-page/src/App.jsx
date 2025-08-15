@@ -657,7 +657,7 @@ function App() {
             </motion.h1>
 
             <TextAnimate
-              className="md:text-2xl text-gray-700 lg:text-xl 4xl:text-4xl"
+              className={`text-sm sm:text-md md:text-2xl text-gray-700 lg:text-xl 4xl:text-4xl`}
               delay={2.2}
             >
               Click above to learn more, if you want ¯\_(ツ)_/¯
@@ -773,8 +773,8 @@ function App() {
               <div
                 className={`fixed overflow-y-auto pl-8 py-1 scrollbar-none space-y-8 text-base animate-in fade-in-0 duration-500 max-h-dvh   ${
                   isSmallLandscape
-                    ? `top-16 bottom-33 left-3 right-3 -translate-x-0`
-                    : `top-16 bottom-35 not-portrait:w-150 lg:top-14 lg:bottom-35 portrait:top-15 portrait:bottom-35 portrait:left-5 portrait:right-0 lg:w-221 4xl:w-401 4xl:top-30 4xl:bottom-70 -translate-x-5`
+                    ? `top-16 bottom-33 left-3 right-8 -translate-x-0`
+                    : `top-16 bottom-35 not-portrait:w-150 lg:top-14 lg:bottom-35 portrait:top-20 portrait:bottom-35 portrait:left-5 portrait:right-0 lg:w-221 4xl:w-401 4xl:top-30 4xl:bottom-70 -translate-x-5`
                 }`}
               >
                 {messages.map((item, i) => (
@@ -1091,7 +1091,7 @@ function App() {
               )}
               <motion.div
                 layout="position"
-                className={`portrait:fixed portrait:left-5 portrait:right-5 flex flex-col ${
+                className={`portrait:fixed portrait:left-5 portrait:right-5 flex z-10 flex-col ${
                   file ? "portrait:bottom-5" : "portrait:bottom-3"
                 } ${isSmallLandscape && "w-full"}`}
               >
