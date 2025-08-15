@@ -1167,7 +1167,7 @@ function App() {
                         : "opacity-100 h-auto"
                     }`}
                   >
-                    <div className="flex justify-center lg:pt-8 space-x-4">
+                    <div className={`flex justify-center lg:pt-8 space-x-4 ${file && "not-lg:pt-6"}`}>
                       <ShinyButton
                         variant="outline"
                         className="cursor-none rounded-3xl bg-white 4xl:p-4 4xl:pl-12 4xl:pr-12 4xl:rounded-full 4xl:border-2"
