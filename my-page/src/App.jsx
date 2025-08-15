@@ -824,7 +824,7 @@ function App() {
 
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <Label className="text-sm">Dark Mode</Label>
+                        <Label className="text-sm">Dark Mode TBD</Label>
                         <Switch
                           className="data-[state=checked]:bg-blue-500"
                           checked={darkMode}
@@ -1010,7 +1010,7 @@ function App() {
 
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <Label className="text-sm">Dark Mode</Label>
+                          <Label className="text-sm">Dark Mode TBD</Label>
                           <Switch
                             className="data-[state=checked]:bg-blue-500"
                             checked={darkMode}
