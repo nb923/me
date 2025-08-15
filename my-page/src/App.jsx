@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useMediaQuery } from 'react-responsive';
+import { useMediaQuery } from "react-responsive";
 
 import "./App.css";
 import ReactMarkdown from "react-markdown";
 import { MarkdownTypewriter } from "react-markdown-typewriter";
-import { isMobile, isTablet, isDesktop } from 'react-device-detect';
+import { isMobile, isTablet, isDesktop } from "react-device-detect";
 
 import { AuroraText } from "@/components/magicui/aurora-text";
 import { AnimatePresence, motion } from "framer-motion";
@@ -33,7 +33,15 @@ import {
 
 import { Switch } from "./components/ui/switch";
 import { Label } from "@radix-ui/react-label";
-import { Card } from "./components/ui/card";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "./components/ui/avatar";
 import {
   Tooltip,
@@ -62,6 +70,7 @@ function App() {
   const AIMESSAGE = 0;
 
   const isTouchPrimary = isMobile || isTablet;
+  const isPortrait = useMediaQuery({ query: "(orientation: portrait)" });
 
   const [isIntroVisible, setIsIntroVisible] = useState(true);
   const [isChatMode, setIsChatMode] = useState(false);
@@ -73,12 +82,9 @@ function App() {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [isChatWritten, setIsChatWritten] = useState(true);
-  const [isPortrait, setIsPortrait] = useState(
-    window.matchMedia("(orientation: portrait)").matches ? true : false
-  );
 
-  const isSmallLandscape = useMediaQuery({ 
-    query: '(max-width: 670px) and (orientation: landscape)' 
+  const isSmallLandscape = useMediaQuery({
+    query: "(max-width: 670px) and (orientation: landscape)",
   });
 
   const audioRef = useRef(null);
@@ -552,16 +558,6 @@ function App() {
   }
 
   useEffect(() => {
-    const orient = window.matchMedia("(orientation: portrait)");
-    const handler = () =>
-      setIsPortrait(
-        window.matchMedia("(orientation: portrait)").matches ? true : false
-      );
-    orient.addEventListener("change", handler);
-    return () => orient.removeEventListener("change", handler);
-  });
-
-  useEffect(() => {
     audioRef.current?.play().catch(() => {
       const catchInteract = () => {
         audioRef.current?.play();
@@ -596,7 +592,9 @@ function App() {
   const gridDimensions = window.innerWidth < 2560 ? 70 : 140;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-y-8 relative bg-blue-50/50 overflow-hidden">
+    <div
+      className={`min-h-screen flex flex-col items-center justify-center gap-y-8 relative bg-blue-50/50 overflow-hidden`}
+    >
       <GridPattern
         width={gridDimensions}
         height={gridDimensions}
@@ -620,7 +618,7 @@ function App() {
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
       ></motion.div>
       <motion.div
-        className="absolute -z-10 w-15 h-15 portrait:top-[0%] portrait:left[0%] portrait:w-[25vh] portrait:h-[25vh] portrait:blur-3xl portrait:bg-pink-400/50 blur-lg lg:w-30 lg:h-30 lg:blur-lg 4xl:w-70 4xl:h-70 4xl:blur-2xl bg-pink-400 rounded-full top-[40%] left-[10%] transform -translate-x-1/2 -translate-y-1/2"
+        className="absolute -z-10 w-15 h-15 portrait:top-[0%] portrait:left[0%] portrait:w-[25vh] portrait:h-[25vh] portrait:blur-3xl portrait:bg-pink-400/25 blur-lg lg:w-30 lg:h-30 lg:blur-lg 4xl:w-70 4xl:h-70 4xl:blur-2xl bg-pink-400 rounded-full top-[40%] left-[10%] transform -translate-x-1/2 -translate-y-1/2"
         animate={{ scale: [1, 1.4, 1], opacity: [1, 0.5, 1] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
       ></motion.div>
@@ -674,7 +672,7 @@ function App() {
               loop
               preload="auto"
             />
-            {!isPortrait && (
+            {!isPortrait && !isSmallLandscape && (
               <div>
                 <a
                   href="https://www.linkedin.com/in/bknideesh/"
@@ -772,48 +770,33 @@ function App() {
               </Popover>
             )}
             {isChatMode && (
-              <div className="fixed top-16 bottom-35 not-portrait:w-150 lg:top-14 lg:bottom-35 portrait:top-15 portrait:bottom-35 portrait:left-5 portrait:right-0 lg:w-221 4xl:w-401 4xl:top-30 4xl:bottom-70 overflow-y-auto pl-8 py-1 scrollbar-none space-y-8 -translate-x-5 text-base">
+              <div
+                className={`fixed overflow-y-auto pl-8 py-1 scrollbar-none space-y-8 text-base animate-in fade-in-0 duration-500 ${
+                  isSmallLandscape
+                    ? `top-16 bottom-33 left-3 right-3 -translate-x-0`
+                    : `top-16 bottom-35 not-portrait:w-150 lg:top-14 lg:bottom-35 portrait:top-15 portrait:bottom-35 portrait:left-5 portrait:right-0 lg:w-221 4xl:w-401 4xl:top-30 4xl:bottom-70 -translate-x-5`
+                }`}
+              >
                 {messages.map((item, i) => (
                   <MessageBubble key={i} message={item} messageIndex={i} />
                 ))}
               </div>
             )}
-            <motion.div
-              layout="position"
-              key="main"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.5,
-                layout: { duration: 1, ease: "easeInOut" },
-              }}
-              className={`flex flex-col items-center gap-y-4 lg:gap-y-8 4xl:gap-y-14 portrait:w-full portrait:justify-end portrait:h-screen portrait:pb-30 ${
-                !isPortrait && isChatMode && !file
-                  ? "fixed -bottom-18 lg:-bottom-26 4xl:-bottom-47"
-                  : ""
-              }
-              
-              ${
-                !isPortrait && isChatMode && file
-                  ? " fixed -bottom-13 lg:-bottom-21 4xl:-bottom-42"
-                  : ""
-              }
-              `}
-            >
-              {
+            {isSmallLandscape && (
+              <>
                 <h1
                   onClick={() => setIsIntroVisible(false)}
-                  className={`portrait:fixed portrait:top-3 portrait:left-3 portrait:text-2xl text-3xl font-bold tracking-tighter md:text-3xl lg:text-6xl 4xl:text-9xl text-center flex justify-center ${
-                    !isPortrait && isChatMode
+                  className={`portrait:fixed portrait:top-3 portrait:left-3 portrait:text-3xl text-3xl font-bold tracking-tighter md:text-3xl lg:text-6xl 4xl:text-9xl text-center flex justify-center ${
+                    !isPortrait && isChatMode && !isSmallLandscape
                       ? "opacity-0 pointer-events-none overflow-hidden"
                       : "opacity-100 h-auto"
-                  }`}
+                  } ${isSmallLandscape && "fixed top-3 left-3 text-3xl"}`}
                 >
                   {words.map((word, idx) => (
                     <motion.span
                       layout
                       key={idx}
-                      className="inline-block mr-1.5"
+                      className={`inline-block ${isSmallLandscape ? "mr-0.5" : "mr-1.5"} portrait:mr-1`}
                       variants={wordVariants}
                       transition={{ duration: 0.5, ease: "easeIn" }}
                     >
@@ -825,153 +808,282 @@ function App() {
                     </motion.span>
                   ))}
                 </h1>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button className="fixed top-4 right-3 bg-transparent shadow-none border-none w-7 h-7">
+                      <EllipsisVertical
+                        strokeWidth={2}
+                        className="h-7 w-7 text-black"
+                      />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[350px]">
+                    <DialogHeader>
+                      <DialogTitle>Settings</DialogTitle>
+                    </DialogHeader>
+
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-sm">Dark Mode</Label>
+                        <Switch
+                          className="data-[state=checked]:bg-blue-500"
+                          checked={darkMode}
+                          onCheckedChange={setDarkMode}
+                          disabled={!isChatWritten}
+                        />
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-1">
+                          <a
+                            href="https://www.youtube.com/watch?v=_Q8Ih2SW-TE"
+                            className="text-blue-500 underline text-sm"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Music
+                          </a>
+                        </div>
+                        <Switch
+                          className="data-[state=checked]:bg-blue-500"
+                          checked={musicOn}
+                          onCheckedChange={handleMusicToggle}
+                          disabled={!isChatWritten}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 pt-4 border-t">
+                      <Button
+                        asChild
+                        className="w-full h-9 bg-[#008FD6] hover:bg-[#007BC4] text-white"
+                      >
+                        <a
+                          href="https://www.linkedin.com/in/bknideesh/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center space-x-2"
+                        >
+                          <Linkedin className="h-4 w-4" />
+                          <span>LinkedIn</span>
+                        </a>
+                      </Button>
+
+                      <Button
+                        asChild
+                        className="w-full h-9 bg-gray-800 hover:bg-gray-700 text-white"
+                      >
+                        <a
+                          href="https://github.com/nb923"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center space-x-2"
+                        >
+                          <Github className="h-4 w-4" />
+                          <span>GitHub</span>
+                        </a>
+                      </Button>
+
+                      <Button
+                        asChild
+                        className="w-full h-9 bg-blue-500 hover:bg-blue-600 text-white"
+                      >
+                        <a
+                          href={resumePdf}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center space-x-2"
+                        >
+                          <FileIcon className="h-4 w-4" />
+                          <span>Resume</span>
+                        </a>
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </>
+            )}
+            <motion.div
+              layout="position"
+              key="main"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.5,
+                layout: { duration: 1, ease: "easeInOut" },
+              }}
+              className={`flex flex-col items-center gap-y-4 lg:gap-y-8 4xl:gap-y-14 portrait:w-full portrait:justify-end portrait:h-screen portrait:pb-30 ${
+                !isPortrait && isChatMode && !file && !isSmallLandscape
+                  ? "fixed -bottom-18 lg:-bottom-28 4xl:-bottom-47"
+                  : ""
               }
-              {isPortrait && !isChatMode && (
+              
+              ${
+                !isPortrait && isChatMode && file && !isSmallLandscape
+                  ? " fixed -bottom-13 lg:-bottom-23 4xl:-bottom-42"
+                  : ""
+              }
+
+              ${
+                isSmallLandscape &&
+                (!file
+                  ? "fixed bottom-1 left-3 right-3"
+                  : "fixed bottom-5 left-3 right-3")
+              }
+              `}
+            >
+              {!isSmallLandscape && (
+                <h1
+                  onClick={() => setIsIntroVisible(false)}
+                  className={`portrait:fixed portrait:top-3 portrait:left-4 portrait:text-3xl text-3xl font-bold tracking-tighter md:text-3xl lg:text-6xl 4xl:text-9xl text-center flex justify-center ${
+                    !isPortrait && isChatMode && !isSmallLandscape
+                      ? "opacity-0 pointer-events-none overflow-hidden"
+                      : "opacity-100 h-auto"
+                  }`}
+                >
+                  {words.map((word, idx) => (
+                    <motion.span
+                      layout
+                      key={idx}
+                      className="inline-block mr-1.5 portrait:mr-0.5"
+                      variants={wordVariants}
+                      transition={{ duration: 0.5, ease: "easeIn" }}
+                    >
+                      {word === "GPT" ? (
+                        <AuroraText>{word}</AuroraText>
+                      ) : (
+                        <p>{word}</p>
+                      )}
+                    </motion.span>
+                  ))}
+                </h1>
+              )}
+              {(isPortrait || isSmallLandscape) && !isChatMode && (
                 <motion.div
                   layout="position"
-                  className={`portrait:flex portrait:flex-col portrait:w-full portrait:space-y-3 portrait:px-5 portrait:flex-end ${
+                  className={`flex flex-col w-full flex-end ${
                     isChatMode
                       ? "opacity-0 pointer-events-none overflow-hidden"
                       : "opacity-100 h-auto"
-                  } ${file ? "portrait:pb-5" : ""}`}
+                  } ${file ? "portrait:pb-5" : ""} ${isPortrait && "px-5"}`}
                 >
-                  <ShinyButton
-                    variant="outline"
-                    className="cursor-none rounded-3xl bg-white 4xl:p-4 4xl:pl-12 4xl:pr-12 4xl:rounded-full 4xl:border-2 portrait:text-left"
-                    onClick={() => setText(prompts[0])}
-                  >
-                    Summarize my experience
-                  </ShinyButton>
-                  <ShinyButton
-                    variant="outline"
-                    className="cursor-none rounded-3xl bg-white 4xl:p-4 4xl:pl-12 4xl:pr-12 4xl:rounded-full 4xl:border-2 portrait:text-left"
-                    onClick={() => setText(prompts[1])}
-                  >
-                    Compare me to peers
-                  </ShinyButton>
-                  <ShinyButton
-                    variant="outline"
-                    className="cursor-none rounded-3xl bg-white 4xl:p-4 4xl:pl-12 4xl:pr-12 4xl:rounded-full 4xl:border-2 portrait:text-left"
-                    onClick={() => setText(prompts[2])}
-                  >
-                    Explain my role fit
-                  </ShinyButton>
-                  <ShinyButton
-                    variant="outline"
-                    className="cursor-none rounded-3xl bg-white 4xl:p-4 4xl:pl-12 4xl:pr-12 4xl:rounded-full 4xl:border-2 portrait:text-left"
-                    onClick={() => setText(prompts[3])}
-                  >
-                    Share a fun fact about me
-                  </ShinyButton>
-                  <ShinyButton
-                    variant="outline"
-                    className="cursor-none rounded-3xl bg-white 4xl:p-4 4xl:pl-12 4xl:pr-12 4xl:rounded-full 4xl:border-2 portrait:text-left"
-                    onClick={() => setText(prompts[4])}
-                  >
-                    List my favorite songs
-                  </ShinyButton>
+                  <div className="relative">
+                    <div className="flex overflow-x-auto scrollbar-none gap-2 pb-0 snap-start snap-x snap-mandatory scroll-smooth">
+                      {prompts.map((prompt, index) => {
+                        const labels = [
+                          "Summarize my experience",
+                          "Compare me to peers",
+                          "Explain my role fit",
+                          "Share a fun fact about me",
+                          "List my favorite songs",
+                        ];
+
+                        return (
+                          <button
+                            key={index}
+                            className="flex-shrink-0 snap-start bg-white/90 border-1 border-gray-300 rounded-full px-4 py-2.5 text-sm font-normal text-[rgb(0,0,0,75%)] hover:bg-white active:scale-95 transition-all duration-200 whitespace-nowrap"
+                            onClick={() => setText(prompt)}
+                          >
+                            {labels[index]}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </motion.div>
               )}
-              {isPortrait && (
+              {isPortrait && !isSmallLandscape && (
                 <>
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button className="fixed top-4 right-3 bg-transparent shadow-none border-none w-5 h-6">
+                      <Button className="fixed top-4 right-2 bg-transparent shadow-none border-none w-7 h-7">
                         <EllipsisVertical
                           strokeWidth={2}
-                          className="h-5 w-5 text-black"
+                          className="h-7 w-7 text-black"
                         />
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
+                    <DialogContent className="sm:max-w-[350px]">
                       <DialogHeader>
                         <DialogTitle>Settings</DialogTitle>
-                        <DialogDescription>
-                          Adjust your preferences and settings here.
-                        </DialogDescription>
                       </DialogHeader>
-                      <div className="4xl:border-2 gap-4 p-4 rounded-2xl border bg-background shadow-xs flex flex-col w-full 4xl:w-90 4xl:p-8 4xl:rounded-4xl 4xl:gap-8">
-                        <span className="flex items-center space-x-2 4xl:space-x-4">
+
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <Label className="text-sm">Dark Mode</Label>
                           <Switch
                             className="data-[state=checked]:bg-blue-500"
                             checked={darkMode}
                             onCheckedChange={setDarkMode}
                             disabled={!isChatWritten}
                           />
-                          <Label className="text-sm 4xl:text-[1.7rem] relative bottom-[2px]">
-                            Dark Mode TBD
-                          </Label>
-                        </span>
-                        <span className="flex items-center space-x-2 4xl:space-x-4">
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-1">
+                            <a
+                              href="https://www.youtube.com/watch?v=_Q8Ih2SW-TE"
+                              className="text-blue-500 underline text-sm"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              Music
+                            </a>
+                          </div>
                           <Switch
                             className="data-[state=checked]:bg-blue-500"
                             checked={musicOn}
                             onCheckedChange={handleMusicToggle}
                             disabled={!isChatWritten}
                           />
-                          <Label className="text-sm 4xl:text-[1.7rem] relative bottom-[2px] flex flex-row space-x-1 4xl:space-x-2">
-                            <a
-                              href="https://www.youtube.com/watch?v=_Q8Ih2SW-TE"
-                              className="text-blue-500 underline underline-offset-3"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              Music
-                            </a>
-                            <p>Toggle</p>
-                          </Label>
-                        </span>
+                        </div>
                       </div>
-                      <div className="4xl:border-2 gap-4 p-4 rounded-2xl border bg-background shadow-xs flex flex-col w-full 4xl:w-90 4xl:p-8 4xl:rounded-4xl 4xl:gap-8">
-                        <span className="items-center space-x-2 4xl:space-x-4">
-                          <div className="flex flex-col space-y-2 w-full">
-                            <a
-                              href="https://www.linkedin.com/in/bknideesh/"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <Button className="w-full py-5 cursor-none bg-[#008FD6] hover:scale-105 hover:opacity-80 hover:bg-[#008FD6] hover:shadow-2xl not-portrait:animate-in not-portrait:fade-in-0 not-portrait:slide-in-from-top-20 not-portrait:duration-500">
-                                <span className="flex flex-row space-x-4 4xl:space-x-8 items-center">
-                                  <Linkedin
-                                    strokeWidth={2}
-                                    className="h-4 w-4 4xl:h-8 4xl:w-8"
-                                  />
-                                  <p>Connect on LinkedIn</p>
-                                </span>
-                              </Button>
-                            </a>
-                            <a
-                              href="https://github.com/nb923"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <Button className="w-full py-5 cursor-none bg-gray-800 hover:scale-105 hover:opacity-80 hover:bg-gray-800 hover:shadow-2xl not-portrait:animate-in not-portrait:fade-in-0 not-portrait:slide-in-from-top-20 not-portrait:duration-500">
-                                <span className="flex flex-row space-x-4 items-center">
-                                  <Github
-                                    strokeWidth={2}
-                                    className="h-4 w-4 4xl:h-8 4xl:w-8"
-                                  />
-                                  <p>View GitHub</p>
-                                </span>
-                              </Button>
-                            </a>
-                            <a
-                              href={resumePdf}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <Button className="w-full py-5 cursor-none bg-blue-500 hover:scale-105 hover:opacity-80 hover:bg-blue-500 hover:shadow-2xl not-portrait:animate-in not-portrait:fade-in-0 not-portrait:slide-in-from-top-20 not-portrait:duration-500">
-                                <span className="flex flex-row space-x-4 items-center">
-                                  <FileIcon
-                                    strokeWidth={2}
-                                    className="h-4 w-4 4xl:h-8 4xl:w-8"
-                                  />
-                                  <p>Resume</p>
-                                </span>
-                              </Button>
-                            </a>
-                          </div>
-                        </span>
+
+                      <div className="space-y-2 pt-4 border-t">
+                        <Button
+                          asChild
+                          className="w-full h-9 bg-[#008FD6] hover:bg-[#007BC4] text-white"
+                        >
+                          <a
+                            href="https://www.linkedin.com/in/bknideesh/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center space-x-2"
+                          >
+                            <Linkedin className="h-4 w-4" />
+                            <span>LinkedIn</span>
+                          </a>
+                        </Button>
+
+                        <Button
+                          asChild
+                          className="w-full h-9 bg-gray-800 hover:bg-gray-700 text-white"
+                        >
+                          <a
+                            href="https://github.com/nb923"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center space-x-2"
+                          >
+                            <Github className="h-4 w-4" />
+                            <span>GitHub</span>
+                          </a>
+                        </Button>
+
+                        <Button
+                          asChild
+                          className="w-full h-9 bg-blue-500 hover:bg-blue-600 text-white"
+                        >
+                          <a
+                            href={resumePdf}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center space-x-2"
+                          >
+                            <FileIcon className="h-4 w-4" />
+                            <span>Resume</span>
+                          </a>
+                        </Button>
                       </div>
                     </DialogContent>
                   </Dialog>
@@ -981,12 +1093,12 @@ function App() {
                 layout="position"
                 className={`portrait:fixed portrait:left-5 portrait:right-5 flex flex-col ${
                   file ? "portrait:bottom-5" : "portrait:bottom-3"
-                } `}
+                } ${isSmallLandscape && "w-full"}`}
               >
                 <div className="flex flex-row">
                   <Textarea
                     disabled={!isChatWritten}
-                    className="h-20 portrait:w-full sm:w-150 lg:w-200 4xl:w-370 4xl:h-40 4xl:text-[1.7rem] 4xl:rounded-2xl 4xl:p-4 4xl:pl-6 text-left resize-none scrollbar-thin scroll-smooth cursor-none border-gray-300 4xl:border-2 text-[rgb(0,0,0,75%)] bg-white"
+                    className={`h-20 portrait:w-full sm:w-150 lg:w-200 4xl:w-370 4xl:h-40 4xl:text-[1.7rem] 4xl:rounded-2xl 4xl:p-4 4xl:pl-6 text-left resize-none scrollbar-thin scroll-smooth cursor-none border-gray-300 4xl:border-2 text-[rgb(0,0,0,75%)] bg-white`}
                     placeholder="Ask me anything... this agent knows my resume better than I do"
                     value={text}
                     onChange={handleTextChange}
@@ -1035,7 +1147,7 @@ function App() {
                     </button>
                   </div>
                 )}
-                {!isPortrait && (
+                {!isPortrait && !isSmallLandscape && (
                   <motion.div
                     layout="position"
                     className={`4xl:space-y-4 ${
@@ -1090,9 +1202,11 @@ function App() {
           </>
         )}
       </AnimatePresence>
-      {!isTouchPrimary && <Pointer>
-        <div className="text-2xl 4xl:text-4xl">👆</div>
-      </Pointer>}
+      {!isTouchPrimary && (
+        <Pointer>
+          <div className="text-2xl 4xl:text-4xl">👆</div>
+        </Pointer>
+      )}
     </div>
   );
 }
