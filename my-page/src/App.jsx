@@ -159,6 +159,14 @@ function App() {
     });
   }
 
+  function handleTextareaBlur() {
+    if (isTouchPrimary) {
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+      });
+    }
+  }
+
   async function handleChatResponse(messagesState) {
     let formData = new FormData();
 
@@ -796,7 +804,9 @@ function App() {
                     <motion.span
                       layout
                       key={idx}
-                      className={`inline-block ${isSmallLandscape ? "mr-0.5" : "mr-1.5"} portrait:mr-1`}
+                      className={`inline-block ${
+                        isSmallLandscape ? "mr-0.5" : "mr-1.5"
+                      } portrait:mr-1`}
                       variants={wordVariants}
                       transition={{ duration: 0.5, ease: "easeIn" }}
                     >
@@ -1103,6 +1113,7 @@ function App() {
                     value={text}
                     onChange={handleTextChange}
                     onKeyDown={handleTextEnter}
+                    onBlur={handleTextareaBlur}
                   />
                   <div className="flex flex-col ml-2 space-y-2 4xl:space-y-4 4xl:ml-4">
                     <Button
