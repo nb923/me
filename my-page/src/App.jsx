@@ -593,7 +593,7 @@ function App() {
 
   return (
     <div
-      className={`min-h-screen flex flex-col items-center justify-center gap-y-8 relative bg-blue-50/50 overflow-hidden`}
+      className={`min-h-dvh portrait:h-dvh flex flex-col items-center justify-center gap-y-8 relative bg-blue-50/50 overflow-hidden`}
     >
       <GridPattern
         width={gridDimensions}
@@ -771,7 +771,7 @@ function App() {
             )}
             {isChatMode && (
               <div
-                className={`fixed overflow-y-auto pl-8 py-1 scrollbar-none space-y-8 text-base animate-in fade-in-0 duration-500 ${
+                className={`fixed overflow-y-auto pl-8 py-1 scrollbar-none space-y-8 text-base animate-in fade-in-0 duration-500 max-h-dvh   ${
                   isSmallLandscape
                     ? `top-16 bottom-33 left-3 right-3 -translate-x-0`
                     : `top-16 bottom-35 not-portrait:w-150 lg:top-14 lg:bottom-35 portrait:top-15 portrait:bottom-35 portrait:left-5 portrait:right-0 lg:w-221 4xl:w-401 4xl:top-30 4xl:bottom-70 -translate-x-5`
@@ -912,7 +912,7 @@ function App() {
                 duration: 0.5,
                 layout: { duration: 1, ease: "easeInOut" },
               }}
-              className={`flex flex-col items-center gap-y-4 lg:gap-y-8 4xl:gap-y-14 portrait:w-full portrait:justify-end portrait:h-screen portrait:pb-30 ${
+              className={`flex flex-col items-center gap-y-4 lg:gap-y-8 4xl:gap-y-14 portrait:w-full portrait:justify-end portrait:h-dvh portrait:pb-30 ${
                 !isPortrait && isChatMode && !file && !isSmallLandscape
                   ? "fixed -bottom-18 lg:-bottom-28 4xl:-bottom-47"
                   : ""
