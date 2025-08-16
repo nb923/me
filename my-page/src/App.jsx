@@ -1156,7 +1156,7 @@ function App() {
                     </p>
                     <button
                       className="relative bottom-[1px] text-blue-950 cursor-none pl-2 pr-3 4xl:pl-4 4xl:pr-6 4xl:text-2xl 4xl:bottom-[3px]"
-                      onClick={() => (setFile(null), setFileText(null))}
+                      onClick={() => setFile(null)}
                     >
                       ×
                     </button>
