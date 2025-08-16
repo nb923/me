@@ -84,7 +84,7 @@ function App() {
   const [isChatWritten, setIsChatWritten] = useState(true);
 
   const isSmallLandscape = useMediaQuery({
-    query: "(max-width: 670px) and (orientation: landscape)",
+    query: "(max-width: 790px) and (orientation: landscape)",
   });
 
   const isShortScreen = useMediaQuery({
@@ -1107,12 +1107,12 @@ function App() {
                 layout="position"
                 className={`portrait:fixed portrait:left-5 portrait:right-5 flex z-10 flex-col ${
                   file ? "portrait:bottom-5" : "portrait:bottom-3"
-                } ${isSmallLandscape && "w-full"}`}
+                } ${(isSmallLandscape) && "w-full"}`}
               >
                 <div className="flex flex-row">
                   <Textarea
                     disabled={!isChatWritten}
-                    className={`h-20 portrait:w-full sm:w-150 lg:w-200 4xl:w-370 4xl:h-40 4xl:text-[1.7rem] 4xl:rounded-2xl 4xl:p-4 4xl:pl-6 text-left resize-none scrollbar-thin scroll-smooth cursor-none border-gray-300 4xl:border-2 text-[rgb(0,0,0,75%)] bg-white`}
+                    className={`h-20 portrait:w-full ${isSmallLandscape ? "w-full" : (isShortScreen ? "sm:w-100" : "w-150") } lg:w-200 4xl:w-370 4xl:h-40 4xl:text-[1.7rem] 4xl:rounded-2xl 4xl:p-4 4xl:pl-6 text-left resize-none scrollbar-thin scroll-smooth cursor-none border-gray-300 4xl:border-2 text-[rgb(0,0,0,75%)] bg-white`}
                     placeholder="Ask me anything... this agent knows my resume better than I do"
                     value={text}
                     onChange={handleTextChange}
@@ -1167,13 +1167,13 @@ function App() {
                     layout="position"
                     className={`4xl:space-y-4 ${
                       isChatMode
-                        ? "opacity-0 pointer-events-none overflow-hidden"
+                        ? (isShortScreen ? (file ? "pt-3 opacity-0 pointer-events-none overflow-hidden" : "pt-11 opacity-0 pointer-events-none overflow-hidden") : "opacity-0 pointer-events-none overflow-hidden")
                         : "opacity-100 h-auto"
                     }`}
                   >
                     <div
                       className={`flex justify-center lg:pt-8 space-x-4 ${
-                        file && "not-lg:pt-6"
+                        file && (isShortScreen ? "pt-6 lg:pt-16" : "md:pt-0 not-lg:pt-6")
                       }`}
                     >
                       <ShinyButton
