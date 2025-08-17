@@ -214,7 +214,7 @@ function App() {
   async function handleTextSubmit() {
     if (text) {
       const sent = text;
-      const sentFile = file;
+      const sentFile = file.name;
 
       setIsChatMode(true);
       setIsChatWritten((prev) => !prev);
@@ -222,13 +222,14 @@ function App() {
       setIsChatLoading((prev) => !prev);
       setFile(null);
 
-      const formatSent = [HUMANMESSAGE, sent];
+      const formatSent = [HUMANMESSAGE, sent, sentFile];
 
       setMessages((prev) => [...prev, formatSent]);
 
       let response = [
         AIMESSAGE,
         await handleChatResponse([...messages, formatSent]),
+        null
       ];
 
       setMessages((prev) => [...prev, response]);
@@ -306,7 +307,7 @@ function App() {
                   <TooltipTrigger className="cursor-none">
                     <Avatar className="w-5 h-5 4xl:w-10 4xl:h-10">
                       <AvatarImage src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='-6 -6 36 36' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' style='background-color:white'%3E%3Cpath d='m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551'/%3E%3C/svg%3E" />
-                      <AvatarFallback>NBK</AvatarFallback>
+                      <AvatarFallback>File</AvatarFallback>
                     </Avatar>
                   </TooltipTrigger>
                   <TooltipContent
@@ -314,7 +315,7 @@ function App() {
                     className="cursor-none 4xl:rounded-2xl"
                   >
                     <p className="4xl:text-2xl 4xl:px-3 4xl:py-2">
-                      {sentFile.name}
+                      {sentFile}
                     </p>
                   </TooltipContent>
                 </Tooltip>
