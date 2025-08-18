@@ -214,7 +214,11 @@ function App() {
   async function handleTextSubmit() {
     if (text) {
       const sent = text;
-      const sentFile = file;
+      let sentFile = null;
+
+      if (file) {
+        sentFile = file.name;
+      }
 
       setIsChatMode(true);
       setIsChatWritten((prev) => !prev);
@@ -222,13 +226,14 @@ function App() {
       setIsChatLoading((prev) => !prev);
       setFile(null);
 
-      const formatSent = [HUMANMESSAGE, sent];
+      const formatSent = [HUMANMESSAGE, sent, sentFile];
 
       setMessages((prev) => [...prev, formatSent]);
 
       let response = [
         AIMESSAGE,
         await handleChatResponse([...messages, formatSent]),
+        null,
       ];
 
       setMessages((prev) => [...prev, response]);
@@ -246,9 +251,9 @@ function App() {
     if (type == HUMANMESSAGE) {
       return (
         <>
-          <div className="relative flex justify-end lg:pr-2 portrait:pl-10">
+          <div className="relative flex justify-end lg:pr-2 portrait:pl-10 cursor-none">
             <Card className="w-fit h-fit px-7 py-4 bg-blue-100 4xl:px-12 4xl:py-6 4xl:border-4 4xl:rounded-3xl">
-              <article className="prose prose-sm 4xl:prose-2xl whitespace-normal break-words">
+              <article className="prose prose-sm 4xl:prose-2xl whitespace-normal break-words cursor-none">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
@@ -294,6 +299,11 @@ function App() {
                         {children}
                       </tr>
                     ),
+                    a: ({ children, ...props }) => (
+                      <a className="cursor-none" {...props}>
+                        {children}
+                      </a>
+                    ),
                   }}
                 >
                   {text}
@@ -306,16 +316,14 @@ function App() {
                   <TooltipTrigger className="cursor-none">
                     <Avatar className="w-5 h-5 4xl:w-10 4xl:h-10">
                       <AvatarImage src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='-6 -6 36 36' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' style='background-color:white'%3E%3Cpath d='m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551'/%3E%3C/svg%3E" />
-                      <AvatarFallback>NBK</AvatarFallback>
+                      <AvatarFallback>File</AvatarFallback>
                     </Avatar>
                   </TooltipTrigger>
                   <TooltipContent
                     side="bottom"
                     className="cursor-none 4xl:rounded-2xl"
                   >
-                    <p className="4xl:text-2xl 4xl:px-3 4xl:py-2">
-                      {sentFile.name}
-                    </p>
+                    <p className="4xl:text-2xl 4xl:px-3 4xl:py-2">{sentFile}</p>
                   </TooltipContent>
                 </Tooltip>
               </div>
@@ -323,11 +331,11 @@ function App() {
           </div>
           {lastMessage && isChatLoading && (
             <div
-              className="relative pl-2 portrait:pr-10"
+              className="relative pl-2 portrait:pr-10 cursor-none"
               {...(lastMessage ? { ref: chatEndRef } : {})}
             >
               <Card className="w-fit h-fit px-7 py-4 4xl:px-12 4xl:py-6 4xl:border-4 4xl:rounded-3xl">
-                <article className="prose prose-sm 4xl:prose-2xl animate-wiggle animate-pulse animate-ease-in-out whitespace-normal break-words">
+                <article className="prose prose-sm 4xl:prose-2xl animate-wiggle animate-pulse animate-ease-in-out whitespace-normal break-words cursor-none">
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
                     components={{
@@ -373,6 +381,11 @@ function App() {
                           {children}
                         </tr>
                       ),
+                      a: ({ children, ...props }) => (
+                        <a className="cursor-none" {...props}>
+                          {children}
+                        </a>
+                      ),
                     }}
                   >
                     Generating...
@@ -396,7 +409,7 @@ function App() {
           {...(lastMessage ? { ref: chatEndRef } : {})}
         >
           <Card className="w-fit h-fit px-7 py-4 4xl:px-12 4xl:py-6 4xl:border-4 4xl:rounded-3xl">
-            <article className="prose prose-sm 4xl:prose-2xl whitespace-normal break-words">
+            <article className="prose prose-sm 4xl:prose-2xl whitespace-normal break-words cursor-none">
               {!lastMessage ? (
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
@@ -442,6 +455,11 @@ function App() {
                       >
                         {children}
                       </tr>
+                    ),
+                    a: ({ children, ...props }) => (
+                      <a className="cursor-none" {...props}>
+                        {children}
+                      </a>
                     ),
                   }}
                 >
@@ -494,6 +512,11 @@ function App() {
                       >
                         {children}
                       </tr>
+                    ),
+                    a: ({ children, ...props }) => (
+                      <a className="cursor-none" {...props}>
+                        {children}
+                      </a>
                     ),
                   }}
                   motionProps={{
@@ -549,6 +572,11 @@ function App() {
                         {children}
                       </tr>
                     ),
+                    a: ({ children, ...props }) => (
+                      <a className="cursor-none" {...props}>
+                        {children}
+                      </a>
+                    ),
                   }}
                 >
                   {text}
@@ -568,6 +596,24 @@ function App() {
 
     return <></>;
   }
+
+  useEffect(() => {
+    const handleTabFocus = () => {
+      if (musicOn) {
+        if (document.hidden) {
+          audioRef.current?.pause();
+        } else {
+          audioRef.current?.play();
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleTabFocus);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleTabFocus);
+    };
+  }, [musicOn]);
 
   useEffect(() => {
     audioRef.current?.play().catch(() => {
@@ -786,7 +832,10 @@ function App() {
                 className={`fixed overflow-y-auto pl-8 py-1 scrollbar-none space-y-8 text-base animate-in fade-in-0 duration-500 max-h-dvh   ${
                   isSmallLandscape
                     ? `top-16 bottom-33 left-3 right-8 -translate-x-0`
-                    : `top-16 bottom-35 not-portrait:w-150 lg:top-14 lg:bottom-35 portrait:top-20 portrait:bottom-35 portrait:left-5 portrait:right-0 lg:w-221 4xl:w-401 4xl:top-30 4xl:bottom-70 -translate-x-5`
+                    : `top-16 bottom-35 not-portrait:w-150 lg:top-14 lg:bottom-35 portrait:top-20 portrait:bottom-35 portrait:left-5 portrait:right-0 ${
+                        !isPortrait &&
+                        "lg:w-221 4xl:w-401 4xl:top-30 4xl:bottom-70"
+                      } -translate-x-5`
                 }`}
               >
                 {messages.map((item, i) => (
@@ -1107,12 +1156,18 @@ function App() {
                 layout="position"
                 className={`portrait:fixed portrait:left-5 portrait:right-5 flex z-10 flex-col ${
                   file ? "portrait:bottom-5" : "portrait:bottom-3"
-                } ${(isSmallLandscape) && "w-full"}`}
+                } ${isSmallLandscape && "w-full"}`}
               >
                 <div className="flex flex-row">
                   <Textarea
                     disabled={!isChatWritten}
-                    className={`h-20 portrait:w-full ${isSmallLandscape ? "w-full" : (isShortScreen ? "sm:w-100" : "w-150") } lg:w-200 4xl:w-370 4xl:h-40 4xl:text-[1.7rem] 4xl:rounded-2xl 4xl:p-4 4xl:pl-6 text-left resize-none scrollbar-thin scroll-smooth cursor-none border-gray-300 4xl:border-2 text-[rgb(0,0,0,75%)] bg-white`}
+                    className={`h-20 portrait:w-full ${
+                      isSmallLandscape
+                        ? "w-full"
+                        : isShortScreen
+                        ? "sm:w-100"
+                        : "w-150"
+                    } lg:w-200 4xl:w-370 4xl:h-40 4xl:text-[1.7rem] 4xl:rounded-2xl 4xl:p-4 4xl:pl-6 text-left resize-none scrollbar-thin scroll-smooth cursor-none border-gray-300 4xl:border-2 text-[rgb(0,0,0,75%)] bg-white`}
                     placeholder="Ask me anything... this agent knows my resume better than I do"
                     value={text}
                     onChange={handleTextChange}
@@ -1156,7 +1211,7 @@ function App() {
                     </p>
                     <button
                       className="relative bottom-[1px] text-blue-950 cursor-none pl-2 pr-3 4xl:pl-4 4xl:pr-6 4xl:text-2xl 4xl:bottom-[3px]"
-                      onClick={() => (setFile(null), setFileText(null))}
+                      onClick={() => setFile(null)}
                     >
                       ×
                     </button>
@@ -1167,13 +1222,20 @@ function App() {
                     layout="position"
                     className={`4xl:space-y-4 ${
                       isChatMode
-                        ? (isShortScreen ? (file ? "pt-3 opacity-0 pointer-events-none overflow-hidden" : "pt-11 opacity-0 pointer-events-none overflow-hidden") : "opacity-0 pointer-events-none overflow-hidden")
+                        ? isShortScreen
+                          ? file
+                            ? "pt-3 opacity-0 pointer-events-none overflow-hidden"
+                            : "pt-11 opacity-0 pointer-events-none overflow-hidden"
+                          : "opacity-0 pointer-events-none overflow-hidden"
                         : "opacity-100 h-auto"
                     }`}
                   >
                     <div
-                      className={`flex justify-center lg:pt-8 space-x-4 ${
-                        file && (isShortScreen ? "pt-6 lg:pt-16" : "md:pt-0 not-lg:pt-6")
+                      className={`flex justify-center lg:pt-10 space-x-4 ${
+                        file &&
+                        (isShortScreen
+                          ? "pt-6 lg:pt-16"
+                          : "md:pt-0 not-lg:pt-6")
                       }`}
                     >
                       <ShinyButton
