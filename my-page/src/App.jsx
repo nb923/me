@@ -68,6 +68,7 @@ import resumePdf from "../files/nbk-resume.pdf";
 function App() {
   const HUMANMESSAGE = 1;
   const AIMESSAGE = 0;
+  const ROOT = window.document.documentElement;
 
   const isTouchPrimary = isMobile || isTablet;
   const isPortrait = useMediaQuery({ query: "(orientation: portrait)" });
@@ -76,7 +77,15 @@ function App() {
   const [isChatMode, setIsChatMode] = useState(false);
   const [isChatLoading, setIsChatLoading] = useState(false);
   const [text, setText] = useState("");
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem("theme");
+
+    if (savedTheme) {
+      return savedTheme === "dark";
+    }
+
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
   const [musicOn, setMusicOn] = useState(true);
   const fileInputDummy = useRef(null);
   const [file, setFile] = useState(null);
@@ -169,6 +178,15 @@ function App() {
         window.scrollTo(0, 0);
       });
     }
+  }
+
+  function handleDarkMode() {
+    ROOT.classList.remove("light", "dark");
+    const newMode = darkMode ? "light" : "dark";
+
+    setDarkMode((prev) => !prev);
+    localStorage.setItem("theme", newMode);
+    ROOT.classList.add(newMode);
   }
 
   async function handleChatResponse(messagesState) {
@@ -632,6 +650,19 @@ function App() {
     }
   }, [messages]);
 
+  useEffect(() => {
+    ROOT.classList.remove("light", "dark");
+    const storedTheme = localStorage.getItem("theme");
+
+    if (storedTheme) {
+      ROOT.classList.add(storedTheme);
+    } else {
+      const mode = darkMode ? "dark" : "light";
+      ROOT.classList.add(darkMode ? "dark" : "light");
+      localStorage.setItem("theme", mode);
+    }
+  });
+
   const containerVariants = {
     hidden: {},
     visible: {
@@ -651,7 +682,7 @@ function App() {
 
   return (
     <div
-      className={`min-h-dvh portrait:h-dvh flex flex-col items-center justify-center gap-y-8 relative bg-blue-50/50 overflow-hidden`}
+      className={`min-h-dvh portrait:h-dvh flex flex-col items-center justify-center gap-y-8 relative bg-blue-50/50 overflow-hidden dark:bg-black`}
     >
       <GridPattern
         width={gridDimensions}
@@ -706,7 +737,7 @@ function App() {
                   transition={{ duration: 0.5, ease: "easeIn" }}
                 >
                   {word === "GPT" ? (
-                    <AuroraText>{word}</AuroraText>
+                    <AuroraText {...(darkMode && {colors:["#EC9911", "#EAB308", "#FF1A1A", "#FF6600"]})}>{word}</AuroraText>
                   ) : (
                     <p>{word}</p>
                   )}
@@ -797,7 +828,7 @@ function App() {
                       <Switch
                         className="data-[state=checked]:bg-blue-500 cursor-none"
                         checked={darkMode}
-                        onCheckedChange={setDarkMode}
+                        onCheckedChange={handleDarkMode}
                         disabled={!isChatWritten}
                       />
                       <Label className="text-sm 4xl:text-[1.7rem] cursor-none relative bottom-[2px]">
@@ -891,7 +922,7 @@ function App() {
                         <Switch
                           className="data-[state=checked]:bg-blue-500"
                           checked={darkMode}
-                          onCheckedChange={setDarkMode}
+                          onCheckedChange={handleDarkMode}
                           disabled={!isChatWritten}
                         />
                       </div>
@@ -1077,7 +1108,7 @@ function App() {
                           <Switch
                             className="data-[state=checked]:bg-blue-500"
                             checked={darkMode}
-                            onCheckedChange={setDarkMode}
+                            onCheckedChange={handleDarkMode}
                             disabled={!isChatWritten}
                           />
                         </div>
