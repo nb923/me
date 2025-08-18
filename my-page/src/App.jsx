@@ -214,7 +214,11 @@ function App() {
   async function handleTextSubmit() {
     if (text) {
       const sent = text;
-      const sentFile = file.name;
+      let sentFile = null;
+
+      if (file) {
+        sentFile = file.name;
+      }
 
       setIsChatMode(true);
       setIsChatWritten((prev) => !prev);
@@ -801,9 +805,9 @@ function App() {
             {isChatMode && (
               <div
                 className={`fixed overflow-y-auto pl-8 py-1 scrollbar-none space-y-8 text-base animate-in fade-in-0 duration-500 max-h-dvh   ${
-                  isSmallLandscape
+                  (isSmallLandscape)
                     ? `top-16 bottom-33 left-3 right-8 -translate-x-0`
-                    : `top-16 bottom-35 not-portrait:w-150 lg:top-14 lg:bottom-35 portrait:top-20 portrait:bottom-35 portrait:left-5 portrait:right-0 lg:w-221 4xl:w-401 4xl:top-30 4xl:bottom-70 -translate-x-5`
+                    : `top-16 bottom-35 not-portrait:w-150 lg:top-14 lg:bottom-35 portrait:top-20 portrait:bottom-35 portrait:left-5 portrait:right-0 ${!isPortrait && "lg:w-221 4xl:w-401 4xl:top-30 4xl:bottom-70"} -translate-x-5`
                 }`}
               >
                 {messages.map((item, i) => (
