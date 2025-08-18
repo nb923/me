@@ -229,7 +229,7 @@ function App() {
       let response = [
         AIMESSAGE,
         await handleChatResponse([...messages, formatSent]),
-        null
+        null,
       ];
 
       setMessages((prev) => [...prev, response]);
@@ -314,9 +314,7 @@ function App() {
                     side="bottom"
                     className="cursor-none 4xl:rounded-2xl"
                   >
-                    <p className="4xl:text-2xl 4xl:px-3 4xl:py-2">
-                      {sentFile}
-                    </p>
+                    <p className="4xl:text-2xl 4xl:px-3 4xl:py-2">{sentFile}</p>
                   </TooltipContent>
                 </Tooltip>
               </div>
@@ -569,6 +567,24 @@ function App() {
 
     return <></>;
   }
+
+  useEffect(() => {
+    const handleTabFocus = () => {
+      if (musicOn) {
+        if (document.hidden) {
+          audioRef.current?.pause();
+        } else {
+          audioRef.current?.play();
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleTabFocus);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleTabFocus);
+    };
+  }, [musicOn]);
 
   useEffect(() => {
     audioRef.current?.play().catch(() => {
@@ -1108,12 +1124,18 @@ function App() {
                 layout="position"
                 className={`portrait:fixed portrait:left-5 portrait:right-5 flex z-10 flex-col ${
                   file ? "portrait:bottom-5" : "portrait:bottom-3"
-                } ${(isSmallLandscape) && "w-full"}`}
+                } ${isSmallLandscape && "w-full"}`}
               >
                 <div className="flex flex-row">
                   <Textarea
                     disabled={!isChatWritten}
-                    className={`h-20 portrait:w-full ${isSmallLandscape ? "w-full" : (isShortScreen ? "sm:w-100" : "w-150") } lg:w-200 4xl:w-370 4xl:h-40 4xl:text-[1.7rem] 4xl:rounded-2xl 4xl:p-4 4xl:pl-6 text-left resize-none scrollbar-thin scroll-smooth cursor-none border-gray-300 4xl:border-2 text-[rgb(0,0,0,75%)] bg-white`}
+                    className={`h-20 portrait:w-full ${
+                      isSmallLandscape
+                        ? "w-full"
+                        : isShortScreen
+                        ? "sm:w-100"
+                        : "w-150"
+                    } lg:w-200 4xl:w-370 4xl:h-40 4xl:text-[1.7rem] 4xl:rounded-2xl 4xl:p-4 4xl:pl-6 text-left resize-none scrollbar-thin scroll-smooth cursor-none border-gray-300 4xl:border-2 text-[rgb(0,0,0,75%)] bg-white`}
                     placeholder="Ask me anything... this agent knows my resume better than I do"
                     value={text}
                     onChange={handleTextChange}
@@ -1168,13 +1190,20 @@ function App() {
                     layout="position"
                     className={`4xl:space-y-4 ${
                       isChatMode
-                        ? (isShortScreen ? (file ? "pt-3 opacity-0 pointer-events-none overflow-hidden" : "pt-11 opacity-0 pointer-events-none overflow-hidden") : "opacity-0 pointer-events-none overflow-hidden")
+                        ? isShortScreen
+                          ? file
+                            ? "pt-3 opacity-0 pointer-events-none overflow-hidden"
+                            : "pt-11 opacity-0 pointer-events-none overflow-hidden"
+                          : "opacity-0 pointer-events-none overflow-hidden"
                         : "opacity-100 h-auto"
                     }`}
                   >
                     <div
                       className={`flex justify-center lg:pt-8 space-x-4 ${
-                        file && (isShortScreen ? "pt-6 lg:pt-16" : "md:pt-0 not-lg:pt-6")
+                        file &&
+                        (isShortScreen
+                          ? "pt-6 lg:pt-16"
+                          : "md:pt-0 not-lg:pt-6")
                       }`}
                     >
                       <ShinyButton
