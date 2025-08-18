@@ -1231,7 +1231,7 @@ function App() {
                     }`}
                   >
                     <div
-                      className={`flex justify-center lg:pt-8 space-x-4 ${
+                      className={`flex justify-center lg:pt-10 space-x-4 ${
                         file &&
                         (isShortScreen
                           ? "pt-6 lg:pt-16"
