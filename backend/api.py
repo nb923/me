@@ -26,6 +26,10 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 
+from pymongo import MongoClient
+from bson.objectid import ObjectId
+from datetime import datetime
+
 import json
 
 load_dotenv()
@@ -42,6 +46,11 @@ server_params = StdioServerParameters(
         "TAVILY_API_KEY": os.getenv("TAVILY_API_KEY")
     }
 )
+
+uri = os.getenv("MONGO_URI")
+client = MongoClient(uri)
+db = client["mydb"]
+collection = db["conversations"]
 
 limiter = Limiter(key_func=get_remote_address)
 
@@ -169,13 +178,20 @@ async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
         status_code=200,
         content={"message": "Too many requests. Please wait a minute before trying again."},
     )
+    
+@app.get("/token")
+async def chat_token():
+    doc = {"messages": [], "createdAt": datetime.utcnow()}
+    result = collection.insert_one(doc)
+    return {"id": str(result.inserted_id)}
 
 @app.post("/chat")
 @limiter.limit("10/minute")
-async def chat_response(request: Request, messages: str = Form(...), file: Optional[UploadFile] = File(None)):
+async def chat_response(request: Request, messages: str = Form(...), file: Optional[UploadFile] = File(None), tkn: str = Form(...)):
     messages_data = json.loads(messages)
     inp = messages_data["messages"]
     file_text = ""
+    token = tkn
     
     if file:
         content = await file.read()
@@ -195,5 +211,15 @@ async def chat_response(request: Request, messages: str = Form(...), file: Optio
     }
     
     result = await agent_executor.ainvoke(input_data)
+    ret = result["messages"][-1].content
+    
+    new_message = {"role": "assistant", "content": ret}
+    inp_modified.append(new_message)
+    
+    obj_id = ObjectId(token)
+    result = collection.update_one(
+        {"_id": obj_id},
+        {"$set": {"messages": inp_modified}}
+    )
         
-    return {"content": result["messages"][-1].content}
+    return {"content": ret}

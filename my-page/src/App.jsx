@@ -69,6 +69,8 @@ function App() {
   const HUMANMESSAGE = 1;
   const AIMESSAGE = 0;
 
+  const [token, setToken] = useState("");
+
   const isTouchPrimary = isMobile || isTablet;
   const isPortrait = useMediaQuery({ query: "(orientation: portrait)" });
 
@@ -148,7 +150,6 @@ function App() {
 
     setFile(file);
     setFileName(file.name);
-    console.log(file);
   }
 
   function handleMusicToggle() {
@@ -190,6 +191,8 @@ function App() {
       })
     );
 
+    formData.append("tkn", token);
+
     try {
       const response = await fetch(
         "https://portfolio-backend-xs4b.onrender.com/chat",
@@ -208,6 +211,27 @@ function App() {
       return result.content;
     } catch {
       return "Error during llm generation";
+    }
+  }
+
+  async function getChatId() {
+    try {
+      const response = await fetch(
+        "https://portfolio-backend-xs4b.onrender.com/token",
+        {
+          method: "GET",
+        }
+      );
+
+      if (!response.ok) {
+        return "Error during token generation";
+      }
+
+      const result = await response.json();
+
+      return result.id;
+    } catch {
+      return "Error during token generation";
     }
   }
 
@@ -596,6 +620,15 @@ function App() {
 
     return <></>;
   }
+
+  useEffect(() => {
+    const fetchChatId = async () => {
+      const temp = await getChatId();
+      setToken(temp);
+    };
+
+    fetchChatId();
+  }, []);
 
   useEffect(() => {
     const handleTabFocus = () => {
