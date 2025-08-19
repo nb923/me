@@ -28,6 +28,7 @@ from slowapi.middleware import SlowAPIMiddleware
 
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+from datetime import datetime
 
 import json
 
@@ -180,7 +181,7 @@ async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
     
 @app.get("/token")
 async def chat_token():
-    doc = {"messages": []}
+    doc = {"messages": [], "createdAt": datetime.utcnow()}
     result = collection.insert_one(doc)
     return {"id": str(result.inserted_id)}
 
