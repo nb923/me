@@ -186,7 +186,7 @@ async def chat_token():
 
 @app.post("/chat")
 @limiter.limit("10/minute")
-async def chat_response(request: Request, messages: str = Form(...), file: Optional[UploadFile] = File(None), tkn: str = ""):
+async def chat_response(request: Request, messages: str = Form(...), file: Optional[UploadFile] = File(None), tkn: str = Form(...)):
     messages_data = json.loads(messages)
     inp = messages_data["messages"]
     file_text = ""
@@ -218,7 +218,7 @@ async def chat_response(request: Request, messages: str = Form(...), file: Optio
     obj_id = ObjectId(token)
     result = collection.update_one(
         {"_id": obj_id},
-        {"$set": {"messages": inp_modified["messages"]}}
+        {"$set": {"messages": inp_modified}}
     )
         
     return {"content": ret}
