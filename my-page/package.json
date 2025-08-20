@@ -31,6 +31,7 @@
     "react": "^19.1.0",
     "react-device-detect": "^2.2.3",
     "react-dom": "^19.1.0",
+    "react-ga4": "^2.1.0",
     "react-markdown": "^10.1.0",
     "react-markdown-typewriter": "^1.1.4",
     "react-pdf": "^10.0.1",
