@@ -61,6 +61,7 @@ import {
 } from "@/components/ui/dialog";
 
 import remarkGfm from "remark-gfm";
+import ReactGA from "react-ga4";
 
 import avatarImage from "../files/avatarimage.png";
 import resumePdf from "../files/nbk-resume.pdf";
@@ -628,6 +629,11 @@ function App() {
     };
 
     fetchChatId();
+  }, []);
+
+  useEffect(() => {
+    ReactGA.initialize("G-38KVW01EV7");
+    ReactGA.send("pageview");
   }, []);
 
   useEffect(() => {
