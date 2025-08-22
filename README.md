@@ -22,8 +22,6 @@ Welcome to my personal website, NideeshGPT! You can ask the AI Agent anything ab
 - 🤖 **AI Agent: NideeshGPT** – Ask me anything about my resume, projects, or interests  
 - 🌙 **Dark/Light Mode** – TBD (planned)  
 
----
-
 ## 🏗 Installation & Setup
 
 Clone the repo and run it locally:
