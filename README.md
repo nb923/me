@@ -14,7 +14,6 @@ Welcome to my personal website, NideeshGPT! You can ask the AI Agent anything ab
 - **Infrastructure:** AWS + Render  
 
 <img width="980" height="593" alt="image" src="https://github.com/user-attachments/assets/eb5ef2f3-c0c9-41c0-9817-17c7bbfbdf0c" />
----
 
 ## ✨ Features
 - 🔗 **Quick Links** – Resume, GitHub, LinkedIn, and more  
