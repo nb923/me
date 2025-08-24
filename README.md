@@ -1,4 +1,4 @@
-# NideeshGPT - My AI Agent Portfolio Website 💪 – [nideesh.ai](https://nideesh.ai)
+# NideeshGPT - My AI Agent Portfolio 💪 – [nideesh.ai](https://nideesh.ai)
 
 ## Overview  
 
